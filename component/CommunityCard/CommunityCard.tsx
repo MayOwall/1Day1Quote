@@ -16,8 +16,8 @@ import {
 import * as S from "./CommunityCard.styles";
 
 // 카드 작성 유저. 클릭시 해당 유저 프로필로 이동
-function Header({ userInfo }: ICommunityCardHeaderProps) {
-  const { _id, name, portrait } = userInfo;
+function Header({ userData }: ICommunityCardHeaderProps) {
+  const { _id, name, portrait } = userData;
   return (
     <S.HeaderContainer>
       <div>
@@ -33,13 +33,10 @@ function Header({ userInfo }: ICommunityCardHeaderProps) {
 }
 
 // 카드 본문. 버튼을 통해 불 붙이기 & 저장하기 가능
-function Body({
-  cardData,
-  handleFire,
-  handleBookmark,
-}: ICommunityCardBodyProps) {
+function Body({ bodyData }: ICommunityCardBodyProps) {
+  const { contentData, handleFire, handleBookmark } = bodyData;
   const { _id, date, image, quote, speaker, isFired, fireCount, isBookMarked } =
-    cardData;
+    contentData;
   return (
     <S.BodyContainer data-_id={_id}>
       <S.BodyDate>{date}</S.BodyDate>
@@ -67,20 +64,11 @@ function Body({
   );
 }
 
-function CommunityCard({
-  userInfo,
-  cardData,
-  handleFire,
-  handleBookmark,
-}: ICommunityCardProps) {
+function CommunityCard({ userData, bodyData }: ICommunityCardProps) {
   return (
     <S.Container>
-      <Header userInfo={userInfo} />
-      <Body
-        cardData={cardData}
-        handleFire={handleFire}
-        handleBookmark={handleBookmark}
-      />
+      <Header userData={userData} />
+      <Body bodyData={bodyData} />
     </S.Container>
   );
 }
