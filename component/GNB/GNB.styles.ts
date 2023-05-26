@@ -1,12 +1,20 @@
 import styled from "@emotion/styled";
 
 export const Container = styled.div`
-  width: 100%;
+  position: fixed;
+  top: 0;
+  left: calc(50% - 200px);
+  width: 400px;
+  @media (max-width: 430px) {
+    width: 100%;
+    left: 0;
+  }
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 3rem 1rem 0.75rem;
   background-color: var(--color0);
+  z-index: 1;
 
   * {
     color: var(--color-main);
