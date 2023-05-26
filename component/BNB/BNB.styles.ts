@@ -9,7 +9,7 @@ export const Container = styled.div`
     width: 100%;
     left: 0;
   }
-  padding: 0.75rem 0 1.5rem;
+  padding: 0.75rem 0;
   display: flex;
   background-color: var(--color0);
   z-index: 1;

@@ -12,7 +12,7 @@ export const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 3rem 1rem 0.75rem;
+  padding: 0.75rem 1rem;
   background-color: var(--color0);
   z-index: 1;
 
