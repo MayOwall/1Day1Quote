@@ -1,6 +1,7 @@
-import "./reset.css";
-import "./globals.css";
+import "@/style/reset.css";
+import "@/style/globals.css";
 import { Metadata } from "next";
+import { BNB, GNB } from "@/component";
 
 export const metadata: Metadata = {
   title: "1Day1Quote",
@@ -27,7 +28,11 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <main>{children}</main>
+        <main>
+          <GNB isAuth={false} />
+          {children}
+          <BNB />
+        </main>
       </body>
     </html>
   );

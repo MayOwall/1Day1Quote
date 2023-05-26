@@ -1,7 +1,9 @@
 :root {
-  --font-light16: 300 16px Noto Sans KR;
-  --font-bold16: 700 16px Noto Sans KR;
-  --font-bold20: 700 20px Noto Sans KR;
+  --font-light12: 300 0.75rem Noto Sans KR;
+  --font-light16: 300 1rem Noto Sans KR;
+  --font-bold16: 700 1rem Noto Sans KR;
+  --font-bold20: 700 1.25rem Noto Sans KR;
+  --font-bold24: 700 1.5rem Noto Sans KR;
   --color0: #ffffff;
   --color1: #f2f2f6;
   --color2: #8c8c8c;
@@ -18,9 +20,11 @@ body {
 }
 
 main {
+  position: relative;
   width: 400px;
   min-height: 100%;
   background-color: var(--color1);
+  padding-top: 3rem;
 }
 
 @media (max-width: 430px) {
