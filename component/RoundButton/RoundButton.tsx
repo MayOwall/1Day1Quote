@@ -8,7 +8,8 @@ function RoundButton({
   handleSelect,
   children,
 }: IRoundButtonProps) {
-  const handleButton = () => {
+  const handleButton = (e: React.MouseEvent) => {
+    e.preventDefault();
     handleSelect(!isSelected);
   };
 
