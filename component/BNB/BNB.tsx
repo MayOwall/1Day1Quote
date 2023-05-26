@@ -6,6 +6,7 @@ import * as S from "./BNB.styles";
 function BNB() {
   const router = useRouter();
   const isMain = !usePathname().includes("community");
+  const isLoginPage = usePathname().includes("/login");
 
   // 버튼 인터렉션과 현재 페이지에 따른 페이지 이동 핸들러
   const handleBNBBtns = (icon: "main" | "community") => {
@@ -23,24 +24,29 @@ function BNB() {
     }
   };
   return (
-    <S.Container>
-      <S.Btn>
-        <WriteIcon
-          width="22px"
-          height="23px"
-          fill={isMain ? "#FF4264" : "black"}
-          onClick={() => handleBNBBtns("main")}
-        />
-      </S.Btn>
-      <S.Btn>
-        <CommunityIcon
-          width="29px"
-          height="24px"
-          fill={!isMain ? "#FF4264" : "black"}
-          onClick={() => handleBNBBtns("community")}
-        />
-      </S.Btn>
-    </S.Container>
+    <>
+      {isLoginPage && <></>}
+      {!isLoginPage && (
+        <S.Container>
+          <S.Btn>
+            <WriteIcon
+              width="22px"
+              height="23px"
+              fill={isMain ? "#FF4264" : "black"}
+              onClick={() => handleBNBBtns("main")}
+            />
+          </S.Btn>
+          <S.Btn>
+            <CommunityIcon
+              width="29px"
+              height="24px"
+              fill={!isMain ? "#FF4264" : "black"}
+              onClick={() => handleBNBBtns("community")}
+            />
+          </S.Btn>
+        </S.Container>
+      )}
+    </>
   );
 }
 
