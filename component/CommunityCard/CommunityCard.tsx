@@ -22,7 +22,7 @@ function Header({ userData }: ICommunityCardHeaderProps) {
     <S.HeaderContainer>
       <div>
         <Link href={`/profile/${_id}`}>
-          <Image src={portrait} fill alt="card-user-portrait" />
+          <Image src={portrait} fill sizes="10rem" alt="card-user-portrait" />
         </Link>
       </div>
       <span>
@@ -42,7 +42,7 @@ function Body({ bodyData }: ICommunityCardBodyProps) {
       <S.BodyDate>{date}</S.BodyDate>
       {image && (
         <S.BodyImage className="card-image">
-          <Image src={image} fill alt="card-image" />
+          <Image src={image} fill sizes="100vw" alt="card-image" />
         </S.BodyImage>
       )}
       <S.BodyQuotes>

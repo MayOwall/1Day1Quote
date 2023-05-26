@@ -26,14 +26,16 @@ function BNB() {
     <S.Container>
       <S.Btn>
         <WriteIcon
-          height={"1.5rem"}
+          width="22px"
+          height="23px"
           fill={isMain ? "#FF4264" : "black"}
           onClick={() => handleBNBBtns("main")}
         />
       </S.Btn>
       <S.Btn>
         <CommunityIcon
-          height={"1.5rem"}
+          width="29px"
+          height="24px"
           fill={!isMain ? "#FF4264" : "black"}
           onClick={() => handleBNBBtns("community")}
         />
