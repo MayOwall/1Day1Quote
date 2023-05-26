@@ -15,6 +15,7 @@ import {
 } from "@/type";
 import * as S from "./CommunityCard.styles";
 
+// 카드 작성 유저. 클릭시 해당 유저 프로필로 이동
 function Header({ userInfo }: ICommunityCardHeaderProps) {
   const { _id, name, portrait } = userInfo;
   return (
@@ -31,6 +32,7 @@ function Header({ userInfo }: ICommunityCardHeaderProps) {
   );
 }
 
+// 카드 본문. 버튼을 통해 불 붙이기 & 저장하기 가능
 function Body({
   cardData,
   handleFire,
