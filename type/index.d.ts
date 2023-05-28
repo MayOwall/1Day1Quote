@@ -8,12 +8,24 @@ interface IRoundButtonProps {
   handleSelect: (v: boolean) => void;
 }
 
+type TBtn = "최신순" | "이번주 인기" | "역대 최고 인기";
+
 interface ICommunityBtnListProps {
   btnListData: {
-    selectedBtn: "recent" | "weekly" | "whole";
-    handleSelectedBtn: (selectedBtn: "recent" | "weekly" | "whole") => void;
+    btnList: TBtn[];
+    selectedBtn: TBtn;
+    handleSelectedBtn: (selectedBtn: TBtn) => void;
   };
 }
+
+interface ICommunityCardListProps {
+  cardListData: IQuoteCardData[];
+  handleCardData: ThandleCardData;
+}
+
+interface ICommunityTemplateProps
+  extends ICommunityBtnListProps,
+    ICommunityCardListProps {}
 
 /*--QuoteCard--*/
 // QuoteCard의 유저 데이터 타입
@@ -44,7 +56,7 @@ interface IQuoteCardData {
 // handleCardData
 type ThandleCardData = (
   type: "add" | "fire" | "bookmark" | "delete",
-  cardId?: string,
+  cardId: string,
   newCardData?: {
     quote: string;
     speaker: string;
@@ -71,10 +83,6 @@ interface IQuoteCardProps {
   handleCardData: ThandleCardData;
 }
 
-interface ICommunityTemplateProps extends ICommunityBtnListProps {
-  cardListData: ICommunityCardProps[];
-}
-
 interface IQuoteFormProps {
   handleCardData: ThandleCardData;
 }
@@ -90,7 +98,9 @@ export {
   IQuoteCardBodyProps,
   IQuoteCardProps,
   ICommunityBtnListProps,
+  ICommunityCardListProps,
   ICommunityTemplateProps,
   IQuoteFormProps,
   IWriteTemplateProps,
+  TBtn,
 };
