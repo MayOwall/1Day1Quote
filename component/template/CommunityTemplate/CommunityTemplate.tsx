@@ -4,7 +4,7 @@ import { AnnounceIcon } from "@/public";
 import {
   ICommunityBtnListProps,
   ICommunityTemplateProps,
-  ICommunityCardListProps,
+  ICardListProps,
 } from "@/type";
 import * as S from "./CommunityTemplate.styles";
 
@@ -38,7 +38,7 @@ function BtnList({ btnListData }: ICommunityBtnListProps) {
 }
 
 // 카드 리스트
-function CardList({ cardListData, handleCardData }: ICommunityCardListProps) {
+function CardList({ cardListData, handleCardData }: ICardListProps) {
   return (
     <S.CardList>
       {cardListData.map((cardData, idx) => (
