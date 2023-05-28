@@ -2,6 +2,7 @@ import "@/style/reset.css";
 import "@/style/globals.css";
 import { Metadata } from "next";
 import { BNB, GNB } from "@/component";
+import ContextProvider from "@/context";
 
 export const metadata: Metadata = {
   title: "1Day1Quote",
@@ -28,11 +29,13 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <main>
-          <GNB isAuth={false} />
-          {children}
-          <BNB />
-        </main>
+        <ContextProvider>
+          <main>
+            <GNB isAuth={false} />
+            {children}
+            <BNB />
+          </main>
+        </ContextProvider>
       </body>
     </html>
   );

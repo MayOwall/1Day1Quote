@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import { saveImageFormData } from "@/hook";
+import { CardIdFormatter, saveImageFormData } from "@/hook";
 import { IQuoteFormProps } from "@/type";
 import * as S from "./QuoteForm.styles";
 
@@ -83,7 +83,7 @@ function QuoteForm({ handleCardData }: IQuoteFormProps) {
     e.preventDefault();
     setImagePreview(() => "");
     setFormData(formDataInit);
-    handleCardData("add", "", formData);
+    handleCardData("add", CardIdFormatter(), formData);
     // 서버로의 문장 제출 작업 추가 필요!!
   };
 

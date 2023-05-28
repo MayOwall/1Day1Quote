@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { WriteTemplate } from "@/component";
+import { DateFormatter } from "@/hook";
 
 const dummyCardListData = [
   {
@@ -31,11 +32,11 @@ const dummyCardListData = [
     },
     contentData: {
       cardId: "cardId2",
-      date: "2023.03.13",
       imageURL:
         "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/tr/2023/04/05/2757ae48-7932-4091-9611-44aa691bd979.jpg",
       quote: "나를 아낄줄 아는 나, 정말 멋져",
       speaker: "짱구",
+      date: "2023.03.13",
       fireCount: 42,
       isFired: true,
       isBookMarked: false,
@@ -50,10 +51,72 @@ export default function WritePage() {
   const handleCardData = (
     type: "add" | "fire" | "bookmark" | "delete",
     cardId?: string,
-    newCardData?: any
+    newCardData?: { quote: string; speaker: string; imageURL: string }
   ) => {
-    console.log("type :", type, "cardId :", cardId);
-    if (type === "add") console.log("newCardData :", newCardData);
+    // 카드 추가
+    if (type === "add" && cardId && !!newCardData) {
+      const { imageURL, quote, speaker } = newCardData;
+      const newContentData = {
+        cardId,
+        imageURL,
+        quote,
+        speaker,
+        date: DateFormatter(new Date()),
+        fireCount: 0,
+        isFired: false,
+        isBookMarked: false,
+      };
+      const nextCardData = {
+        ...cardListData[cardListData.length - 1],
+        contentData: newContentData,
+      };
+      console.log(nextCardData);
+      debugger;
+      const nextCardListData = [...cardListData, nextCardData];
+      setCardListData(nextCardListData);
+      return;
+    }
+
+    // 카드 불 수정
+    if (type === "fire" && cardId) {
+      const nextCardListData = cardListData.map((cardData) => {
+        if (cardData.contentData.cardId === cardId) {
+          cardData.contentData.isFired
+            ? (cardData.contentData.fireCount -= 1)
+            : (cardData.contentData.fireCount += 1);
+          cardData.contentData.isFired = !cardData.contentData.isFired;
+          return cardData;
+        } else {
+          return cardData;
+        }
+      });
+      setCardListData(nextCardListData);
+      return;
+    }
+
+    // 카드 북마크 수정
+    if (type === "bookmark" && cardId) {
+      const nextCardListData = cardListData.map((cardData) => {
+        if (cardData.contentData.cardId === cardId) {
+          cardData.contentData.isBookMarked =
+            !cardData.contentData.isBookMarked;
+          return cardData;
+        } else {
+          return cardData;
+        }
+      });
+      setCardListData(() => nextCardListData);
+      return;
+    }
+
+    // 카드 삭제
+    if (type === "delete") {
+      const nextCardListData = cardListData.filter(
+        (v) => v.contentData.cardId === cardId
+      );
+      setCardListData(nextCardListData);
+      return;
+    }
   };
 
   return (

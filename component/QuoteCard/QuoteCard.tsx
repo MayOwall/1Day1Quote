@@ -20,21 +20,26 @@ import * as S from "./QuoteCard.styles";
 
 // 카드 작성 유저. 클릭시 해당 유저 프로필로 이동
 function Header({ userData, handleDelete }: IQuoteCardHeaderProps) {
-  const { _id, name, portrait } = userData;
-  const { userId } = useContext(Context);
+  const { userId, name, profileImage } = userData;
+  const currentUserId = useContext(Context).userId;
   return (
     <S.HeaderContainer>
       <div>
         <div>
-          <Link href={`/profile/${_id}`}>
-            <Image src={portrait} fill sizes="10rem" alt="card-user-portrait" />
+          <Link href={`/profile/${userId}`}>
+            <Image
+              src={profileImage}
+              fill
+              sizes="10rem"
+              alt="card-user-portrait"
+            />
           </Link>
         </div>
         <span>
-          <Link href={`/profile/${_id}`}>{name}</Link>
+          <Link href={`/profile/${userId}`}>{name}</Link>
         </span>
       </div>
-      {userId === _id && (
+      {userId === currentUserId && (
         <S.CardEditBtns>
           <TrashIcon onClick={handleDelete} />
         </S.CardEditBtns>

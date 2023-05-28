@@ -7,3 +7,14 @@ export const saveImageFormData = async (
     return "error";
   }
 };
+
+export const DateFormatter = (date: Date) => {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const today = date.getDate();
+  return `${year}.${month}.${today}`;
+};
+
+export const CardIdFormatter = () => {
+  return `${new Date().getDate()}${Math.random()}`;
+};
