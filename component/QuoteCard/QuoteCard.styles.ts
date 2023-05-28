@@ -10,26 +10,46 @@ export const HeaderContainer = styled.div`
   width: 100%;
   padding: 0.75rem 1rem;
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
   border-bottom: 1px solid var(--color1);
 
-  div {
-    width: 2rem;
-    height: 2rem;
-    aspect-ratio: 1 / 1;
-    position: relative;
-    border-radius: 50%;
+  > div:first-of-type {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 
-    img {
+    div {
+      width: 2rem;
+      height: 2rem;
+      aspect-ratio: 1 / 1;
+      position: relative;
       border-radius: 50%;
-      object-fit: cover;
+
+      img {
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    }
+    span {
+      color: var(--color3);
+      font: var(--font-light16);
     }
   }
+`;
 
-  span {
-    color: var(--color3);
-    font: var(--font-light16);
+export const CardEditBtns = styled.div`
+  flex-shrink: 0;
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  svg {
+    padding: 0 0.25rem;
+    cursor: pointer;
+    opacity: 70%;
+
+    :hover {
+      opacity: 100%;
+    }
   }
 `;
 
