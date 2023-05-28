@@ -48,8 +48,13 @@ function ButtonList({ btnListData }: ICommunityBtnListProps) {
 function CardList({ cardListData }: { cardListData: ICommunityCardProps[] }) {
   return (
     <S.CardList>
-      {cardListData.map(({ userData, bodyData }, idx) => (
-        <CommunityCard key={idx} userData={userData} bodyData={bodyData} />
+      {cardListData.map(({ userData, bodyData, handleDelete }, idx) => (
+        <CommunityCard
+          key={idx}
+          userData={userData}
+          bodyData={bodyData}
+          handleDelete={handleDelete}
+        />
       ))}
     </S.CardList>
   );
