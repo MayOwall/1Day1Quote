@@ -110,6 +110,7 @@ function QuoteForm({ handleCardData }: IQuoteFormProps) {
         </div>
         <S.ImageInput
           type="file"
+          accept="image/*"
           ref={imageInputRef}
           onChange={handleImageValue}
         />
