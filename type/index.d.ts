@@ -18,14 +18,14 @@ interface ICommunityBtnListProps {
   };
 }
 
-interface ICommunityCardListProps {
+interface ICardListProps {
   cardListData: IQuoteCardData[];
   handleCardData: ThandleCardData;
 }
 
 interface ICommunityTemplateProps
   extends ICommunityBtnListProps,
-    ICommunityCardListProps {}
+    ICardListProps {}
 
 /*--QuoteCard--*/
 // QuoteCard의 유저 데이터 타입
@@ -91,6 +91,30 @@ interface IWriteTemplateProps {
   handleCardData: ThandleCardData;
 }
 
+interface IProfileCardProps {
+  userData: {
+    userId: string;
+    userName: string;
+    userIntroduce: string;
+    userImageURL: string;
+  };
+  userActData: {
+    userQuoteNum: number;
+    userBookmarkNum: number;
+  };
+}
+
+interface IProfileBtnListProps {
+  selectedType: "write" | "bookmark";
+  handleSelectedType: () => void;
+}
+
+interface IProfileTemplateProps extends IProfileBtnListProps {
+  profileData: IProfileCardProps;
+  cardListData: IQuoteCardData[];
+  handleCardData: ThandleCardData;
+}
+
 export {
   IGNBProps,
   IRoundButtonProps,
@@ -98,9 +122,12 @@ export {
   IQuoteCardBodyProps,
   IQuoteCardProps,
   ICommunityBtnListProps,
-  ICommunityCardListProps,
+  ICardListProps,
   ICommunityTemplateProps,
   IQuoteFormProps,
   IWriteTemplateProps,
   TBtn,
+  IProfileCardProps,
+  IProfileBtnListProps,
+  IProfileTemplateProps,
 };
