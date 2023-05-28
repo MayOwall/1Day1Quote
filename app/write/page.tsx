@@ -50,7 +50,7 @@ export default function WritePage() {
   // 특정 id의 카드를 추가, 수정, 삭제하는 핸들러
   const handleCardData = (
     type: "add" | "fire" | "bookmark" | "delete",
-    cardId?: string,
+    cardId: string,
     newCardData?: { quote: string; speaker: string; imageURL: string }
   ) => {
     // 카드 추가
@@ -70,8 +70,6 @@ export default function WritePage() {
         ...cardListData[cardListData.length - 1],
         contentData: newContentData,
       };
-      console.log(nextCardData);
-      debugger;
       const nextCardListData = [...cardListData, nextCardData];
       setCardListData(nextCardListData);
       return;

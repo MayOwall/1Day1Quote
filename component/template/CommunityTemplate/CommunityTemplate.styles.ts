@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 export const Container = styled.section`
   width: 100%;
   height: 100%;
-  margin-bottom: 5rem;
+  margin-bottom: 7rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,6 +34,6 @@ export const ButtonContainer = styled.div`
 export const CardList = styled.div`
   width: calc(100% - 2rem);
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: 1rem;
 `;

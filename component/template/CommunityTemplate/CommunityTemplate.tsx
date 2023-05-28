@@ -1,10 +1,10 @@
 "use client";
-import { RoundButton, CommunityCard } from "@/component";
+import { RoundButton, QuoteCard } from "@/component";
 import { AnnounceIcon } from "@/public";
 import {
   ICommunityBtnListProps,
-  ICommunityCardProps,
   ICommunityTemplateProps,
+  ICommunityCardListProps,
 } from "@/type";
 import * as S from "./CommunityTemplate.styles";
 
@@ -19,41 +19,33 @@ function Announce() {
 }
 
 // 카드 정렬 버튼
-function ButtonList({ btnListData }: ICommunityBtnListProps) {
-  const { selectedBtn, handleSelectedBtn } = btnListData;
+function BtnList({ btnListData }: ICommunityBtnListProps) {
+  const { btnList, selectedBtn, handleSelectedBtn } = btnListData;
+
   return (
     <S.ButtonContainer>
-      <RoundButton
-        isSelected={selectedBtn === "recent"}
-        handleSelect={() => handleSelectedBtn("recent")}
-      >
-        최신순
-      </RoundButton>
-      <RoundButton
-        isSelected={selectedBtn === "weekly"}
-        handleSelect={() => handleSelectedBtn("weekly")}
-      >
-        이번주 인기
-      </RoundButton>
-      <RoundButton
-        isSelected={selectedBtn === "whole"}
-        handleSelect={() => handleSelectedBtn("whole")}
-      >
-        역대 최고 인기
-      </RoundButton>
+      {btnList.map((btnName) => (
+        <RoundButton
+          key={btnName}
+          isSelected={selectedBtn === btnName}
+          handleSelect={() => handleSelectedBtn(btnName)}
+        >
+          {btnName}
+        </RoundButton>
+      ))}
     </S.ButtonContainer>
   );
 }
 
-function CardList({ cardListData }: { cardListData: ICommunityCardProps[] }) {
+// 카드 리스트
+function CardList({ cardListData, handleCardData }: ICommunityCardListProps) {
   return (
     <S.CardList>
-      {cardListData.map(({ userData, bodyData, handleDelete }, idx) => (
-        <CommunityCard
+      {cardListData.map((cardData, idx) => (
+        <QuoteCard
           key={idx}
-          userData={userData}
-          bodyData={bodyData}
-          handleDelete={handleDelete}
+          cardData={cardData}
+          handleCardData={handleCardData}
         />
       ))}
     </S.CardList>
@@ -63,12 +55,13 @@ function CardList({ cardListData }: { cardListData: ICommunityCardProps[] }) {
 function CommunityTemplate({
   btnListData,
   cardListData,
+  handleCardData,
 }: ICommunityTemplateProps) {
   return (
     <S.Container>
       <Announce />
-      <ButtonList btnListData={btnListData} />
-      <CardList cardListData={cardListData} />
+      <BtnList btnListData={btnListData} />
+      <CardList cardListData={cardListData} handleCardData={handleCardData} />
     </S.Container>
   );
 }
