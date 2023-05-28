@@ -15,6 +15,7 @@ function QuoteForm({ handleCardData }: IQuoteFormProps) {
   const [formData, setFormData] = useState(formDataInit);
   const [imagePreview, setImagePreview] = useState("");
   const [quoteHeight, setQuoteHeight] = useState(30);
+  const [isSubmitAble, setIsSubmitAble] = useState(false);
   const quoteRef = useRef<HTMLDivElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const { quote, speaker } = formData;
@@ -81,6 +82,7 @@ function QuoteForm({ handleCardData }: IQuoteFormProps) {
   // 오늘의 문장 제출 핸들러
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSubmitAble) return;
     setImagePreview(() => "");
     setFormData(formDataInit);
     handleCardData("add", CardIdFormatter(), formData);
@@ -92,7 +94,18 @@ function QuoteForm({ handleCardData }: IQuoteFormProps) {
     if (quoteRef.current) {
       setQuoteHeight(quoteRef.current.clientHeight);
     }
+    return;
   }, [formData.quote]);
+
+  // quote값 또는 speaker값에 따른 Form Submit 가능 여부 판별
+  useEffect(() => {
+    if (!formData.quote || !formData.speaker) {
+      setIsSubmitAble(false);
+    } else {
+      setIsSubmitAble(true);
+    }
+    return;
+  }, [formData]);
 
   return (
     <S.Container onSubmit={onSubmit}>
@@ -134,7 +147,9 @@ function QuoteForm({ handleCardData }: IQuoteFormProps) {
           onChange={handleSpeaker}
         />
       </div>
-      <S.SubmitBtn type="submit">오늘의 문장 추가하기</S.SubmitBtn>
+      <S.SubmitBtn type="submit" isSubmitAble={isSubmitAble}>
+        오늘의 문장 추가하기
+      </S.SubmitBtn>
     </S.Container>
   );
 }

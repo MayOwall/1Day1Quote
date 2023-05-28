@@ -112,7 +112,7 @@ export default function WritePage() {
     // 카드 삭제
     if (type === "delete") {
       const nextCardListData = cardListData.filter(
-        (v) => v.contentData.cardId === cardId
+        (v) => v.contentData.cardId !== cardId
       );
       setCardListData(nextCardListData);
       return;

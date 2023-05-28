@@ -84,13 +84,18 @@ export const SpeakerInput = styled.input`
   font: inherit;
 `;
 
-export const SubmitBtn = styled.button`
+interface ISubmitBtn {
+  isSubmitAble: boolean;
+}
+export const SubmitBtn = styled.button<ISubmitBtn>`
   width: 100%;
   height: 3rem;
   margin-top: 1rem;
   color: var(--color0);
-  background-color: var(--color-main);
+  background-color: ${({ isSubmitAble }) =>
+    isSubmitAble ? "var(--color-main)" : "var(--color2)"};
   border: none;
   border-radius: 10px;
   font: var(--font-light16);
+  cursor: pointer;
 `;
