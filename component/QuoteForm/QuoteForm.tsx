@@ -1,34 +1,49 @@
 "use client";
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
-import { IQuoteFormProps } from "@/type";
 import { saveImageFormData } from "@/hook";
+import { IQuoteFormProps } from "@/type";
 import * as S from "./QuoteForm.styles";
 
-function QuoteForm({
-  formValue,
-  handleFormValue,
-  handleSubmit,
-}: IQuoteFormProps) {
-  const { quote, speaker } = formValue;
+const formDataInit = {
+  quote: "",
+  speaker: "",
+  imageURL: "",
+};
+
+function QuoteForm({ handleCardData }: IQuoteFormProps) {
+  const [formData, setFormData] = useState(formDataInit);
   const [imagePreview, setImagePreview] = useState("");
+  const [quoteHeight, setQuoteHeight] = useState(30);
   const quoteRef = useRef<HTMLDivElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
-  const [quoteHeight, setQuoteHeight] = useState(30);
+  const { quote, speaker } = formData;
 
-  // QuoteInput value 핸들러
+  // FormData 핸들러
+  const handleFormData = (
+    type: "quote" | "speaker" | "imageURL",
+    value: string
+  ) => {
+    const nextFromData = {
+      ...formData,
+      [type]: value,
+    };
+    setFormData(() => nextFromData);
+  };
+
+  // 문장 값 핸들러
   const handleQuote = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target;
-    handleFormValue({ quote: value });
+    handleFormData("quote", value);
   };
 
-  // SpeakerInput value 핸들러
+  // 출처 값 핸들러
   const handleSpeaker = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    handleFormValue({ speaker: value });
+    handleFormData("speaker", value);
   };
 
-  // ImagePreview value 핸들러
+  // 미리보기 이미지 값 핸들러
   const handleImagePreview = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.item(0);
     if (!file) return;
@@ -38,15 +53,15 @@ function QuoteForm({
     fileReader.onload = (data) => {
       if (!data.target) return;
       const nextImagePreview = data.target.result;
-      if (nextImagePreview) setImagePreview(() => nextImagePreview.toString());
+      if (nextImagePreview) setImagePreview(nextImagePreview.toString());
     };
   };
 
-  // 이미지 값 변경 핸들러
+  // 이미지URL 값 변경 핸들러
   const handleImageValue = async (e: React.ChangeEvent<HTMLInputElement>) => {
     handleImagePreview(e);
-    const nextImageUrl = await saveImageFormData(e);
-    handleFormValue({ imageUrl: nextImageUrl.toString() });
+    const nextImageURL = await saveImageFormData(e);
+    handleFormData("imageURL", nextImageURL);
   };
 
   // 이미지 추가 & 이미지 변경 버튼 핸들러
@@ -61,14 +76,15 @@ function QuoteForm({
   const handleImageDelBtn = (e: React.MouseEvent) => {
     e.preventDefault();
     setImagePreview(() => "");
-    handleFormValue({ imageUrl: "" });
   };
 
   // 오늘의 문장 제출 핸들러
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    handleSubmit();
     setImagePreview(() => "");
+    setFormData(formDataInit);
+    handleCardData("add", "", formData);
+    // 서버로의 문장 제출 작업 추가 필요!!
   };
 
   // Quote값이 변경될 때마다 자동 갱신되는 QuoteInput 높이
@@ -76,7 +92,7 @@ function QuoteForm({
     if (quoteRef.current) {
       setQuoteHeight(quoteRef.current.clientHeight);
     }
-  }, [formValue.quote]);
+  }, [formData.quote]);
 
   return (
     <S.Container onSubmit={onSubmit}>

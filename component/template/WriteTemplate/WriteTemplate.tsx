@@ -6,11 +6,7 @@ import * as S from "./WriteTemplate.styles";
 function WriteTemplate({ cardListData, handleCardData }: IWriteTemplateProps) {
   return (
     <S.Container>
-      {/* <QuoteForm
-        formValue={formValue}
-        handleFormValue={handleFormValue}
-        handleSubmit={handleSubmit}
-      /> */}
+      <QuoteForm handleCardData={handleCardData} />
       {cardListData.map((cardData, idx) => (
         <QuoteCard
           key={idx}

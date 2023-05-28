@@ -41,6 +41,17 @@ interface IQuoteCardData {
   contentData: IQuoteCardContentData;
 }
 
+// handleCardData
+type ThandleCardData = (
+  type: "add" | "fire" | "bookmark" | "delete",
+  cardId?: string,
+  newCardData?: {
+    quote: string;
+    speaker: string;
+    imageURL: string;
+  }
+) => void;
+
 // QuoteCard의 헤더 타입
 interface ICQuoteCardHeaderProps {
   userData: IQuoteCardUserData;
@@ -57,36 +68,19 @@ interface IQuoteCardBodyProps {
 // QuoteCard의 프롭 타입
 interface IQuoteCardProps {
   cardData: IQuoteCardData;
-  handleCardData: (
-    type: "add" | "fire" | "bookmark" | "delete",
-    cardId?: string,
-    newCardData?: any
-  ) => void;
+  handleCardData: ThandleCardData;
 }
 
 interface ICommunityTemplateProps extends ICommunityBtnListProps {
   cardListData: ICommunityCardProps[];
 }
 
-interface IFormValue {
-  quote?: string;
-  speaker?: string;
-  imageUrl?: string;
-}
-
 interface IQuoteFormProps {
-  formValue: IFormValue;
-  handleFormValue: (newFormValues: IFormValue) => void;
-  handleSubmit: () => void;
+  handleCardData: ThandleCardData;
 }
-
 interface IWriteTemplateProps {
   cardListData: IQuoteCardData[];
-  handleCardData: (
-    type: "add" | "fire" | "bookmark" | "delete",
-    cardId?: string,
-    newCardData?: any
-  ) => void;
+  handleCardData: ThandleCardData;
 }
 
 export {
@@ -97,7 +91,6 @@ export {
   IQuoteCardProps,
   ICommunityBtnListProps,
   ICommunityTemplateProps,
-  IFormValue,
   IQuoteFormProps,
   IWriteTemplateProps,
 };
