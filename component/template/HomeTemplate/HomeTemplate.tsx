@@ -4,9 +4,9 @@ import { AnnounceIcon } from "@/public";
 import {
   ICommunityBtnListProps,
   ICommunityTemplateProps,
-  ICommunityCardListProps,
+  ICardListProps,
 } from "@/type";
-import * as S from "./CommunityTemplate.styles";
+import * as S from "./HomeTemplate.styles";
 
 // 공지사항
 function Announce() {
@@ -38,7 +38,7 @@ function BtnList({ btnListData }: ICommunityBtnListProps) {
 }
 
 // 카드 리스트
-function CardList({ cardListData, handleCardData }: ICommunityCardListProps) {
+function CardList({ cardListData, handleCardData }: ICardListProps) {
   return (
     <S.CardList>
       {cardListData.map((cardData, idx) => (
@@ -52,7 +52,7 @@ function CardList({ cardListData, handleCardData }: ICommunityCardListProps) {
   );
 }
 
-function CommunityTemplate({
+function HomeTemplate({
   btnListData,
   cardListData,
   handleCardData,
@@ -66,4 +66,4 @@ function CommunityTemplate({
   );
 }
 
-export default CommunityTemplate;
+export default HomeTemplate;

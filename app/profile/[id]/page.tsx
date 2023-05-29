@@ -1,7 +1,22 @@
 "use client";
+
+import { ProfileTemplate } from "@/component";
+import { DateFormatter } from "@/hook";
 import { useState } from "react";
-import { HomeTemplate } from "@/component";
-import { TBtn } from "@/type";
+
+const dummyProfileData = {
+  userData: {
+    userId: "user123",
+    userName: "shin_zzang",
+    userIntroduce: "천방지축 어리둥절 빙글빙글",
+    userImageURL:
+      "https://item.kakaocdn.net/do/fd0050f12764b403e7863c2c03cd4d2d7154249a3890514a43687a85e6b6cc82",
+  },
+  userActData: {
+    userQuoteNum: 2,
+    userBookmarkNum: 2,
+  },
+};
 
 const dummyCardListData = [
   {
@@ -16,29 +31,10 @@ const dummyCardListData = [
       date: "2023.03.12",
       imageURL:
         "https://sojoong.joins.com/wp-content/uploads/sites/4/2018/12/bodo_still06.jpg",
-      quote: "첫번째 카드",
+      quote: "나를 사랑할 줄 아는 나, 정말 멋져",
       speaker: "짱구",
       fireCount: 123,
       isFired: false,
-      isBookMarked: false,
-    },
-  },
-  {
-    userData: {
-      userId: "user456",
-      name: "boe-zzang",
-      profileImage:
-        "https://cdn.themission.co.kr/news/photo/202211/58650_63198_2559.jpg",
-    },
-    contentData: {
-      cardId: "cardId2",
-      imageURL:
-        "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/tr/2023/04/05/2757ae48-7932-4091-9611-44aa691bd979.jpg",
-      quote: "두번째 카드",
-      speaker: "짱구",
-      date: "2023.03.13",
-      fireCount: 42,
-      isFired: true,
       isBookMarked: false,
     },
   },
@@ -50,51 +46,62 @@ const dummyCardListData = [
         "https://item.kakaocdn.net/do/fd0050f12764b403e7863c2c03cd4d2d7154249a3890514a43687a85e6b6cc82",
     },
     contentData: {
-      cardId: "cardId3",
-      date: "2023.03.12",
+      cardId: "cardId2",
       imageURL:
-        "https://sojoong.joins.com/wp-content/uploads/sites/4/2018/12/bodo_still06.jpg",
-      quote: "세번째 카드",
+        "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/tr/2023/04/05/2757ae48-7932-4091-9611-44aa691bd979.jpg",
+      quote: "나를 아낄줄 아는 나, 정말 멋져",
       speaker: "짱구",
-      fireCount: 123,
-      isFired: false,
-      isBookMarked: false,
-    },
-  },
-  {
-    userData: {
-      userId: "user456",
-      name: "boe-zzang",
-      profileImage:
-        "https://cdn.themission.co.kr/news/photo/202211/58650_63198_2559.jpg",
-    },
-    contentData: {
-      cardId: "cardId4",
-      date: "2023.03.12",
-      imageURL:
-        "https://sojoong.joins.com/wp-content/uploads/sites/4/2018/12/bodo_still06.jpg",
-      quote: "네번째 카드",
-      speaker: "짱구",
-      fireCount: 123,
-      isFired: false,
+      date: "2023.03.13",
+      fireCount: 42,
+      isFired: true,
       isBookMarked: false,
     },
   },
 ];
 
-export default function Home() {
-  const btnList: TBtn[] = ["최신순", "이번주 인기", "역대 최고 인기"];
+export default function ProfilePage() {
   const [cardListData, setCardListData] = useState(dummyCardListData);
-  const [selectedBtn, setSelectedBtn] = useState<TBtn>("최신순");
+  const [selectedType, setSelectedType] = useState<"write" | "bookmark">(
+    "write"
+  );
 
-  // 선택한 버튼 값 핸들러
-  const handleSelectedBtn = (selectedBtn: TBtn) => setSelectedBtn(selectedBtn);
+  // 현재 선택한 카드 타입 값 핸들러
+  const handleSelectedType = () => {
+    if (selectedType === "write") {
+      setSelectedType(() => "bookmark");
+    } else {
+      setSelectedType(() => "write");
+    }
+  };
 
   // 특정 id의 카드를 추가, 수정, 삭제하는 핸들러
   const handleCardData = (
     type: "add" | "fire" | "bookmark" | "delete",
-    cardId: string
+    cardId: string,
+    newCardData?: { quote: string; speaker: string; imageURL: string }
   ) => {
+    // 카드 추가
+    if (type === "add" && cardId && !!newCardData) {
+      const { imageURL, quote, speaker } = newCardData;
+      const newContentData = {
+        cardId,
+        imageURL,
+        quote,
+        speaker,
+        date: DateFormatter(new Date()),
+        fireCount: 0,
+        isFired: false,
+        isBookMarked: false,
+      };
+      const nextCardData = {
+        ...cardListData[cardListData.length - 1],
+        contentData: newContentData,
+      };
+      const nextCardListData = [...cardListData, nextCardData];
+      setCardListData(nextCardListData);
+      return;
+    }
+
     // 카드 불 수정
     if (type === "fire" && cardId) {
       const nextCardListData = cardListData.map((cardData) => {
@@ -138,8 +145,10 @@ export default function Home() {
   };
 
   return (
-    <HomeTemplate
-      btnListData={{ btnList, selectedBtn, handleSelectedBtn }}
+    <ProfileTemplate
+      profileData={dummyProfileData}
+      selectedType={selectedType}
+      handleSelectedType={handleSelectedType}
       cardListData={cardListData}
       handleCardData={handleCardData}
     />
