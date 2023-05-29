@@ -12,6 +12,7 @@ export const Container = styled.div`
   padding: 0.75rem 0;
   display: flex;
   background-color: var(--color0);
+  border-top: 1px solid var(--color1);
   z-index: 1;
 `;
 
