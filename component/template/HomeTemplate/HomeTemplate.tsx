@@ -6,7 +6,7 @@ import {
   ICommunityTemplateProps,
   ICardListProps,
 } from "@/type";
-import * as S from "./CommunityTemplate.styles";
+import * as S from "./HomeTemplate.styles";
 
 // 공지사항
 function Announce() {
@@ -52,7 +52,7 @@ function CardList({ cardListData, handleCardData }: ICardListProps) {
   );
 }
 
-function CommunityTemplate({
+function HomeTemplate({
   btnListData,
   cardListData,
   handleCardData,
@@ -66,4 +66,4 @@ function CommunityTemplate({
   );
 }
 
-export default CommunityTemplate;
+export default HomeTemplate;

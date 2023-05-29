@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { CommunityTemplate } from "@/component";
+import { HomeTemplate } from "@/component";
 import { TBtn } from "@/type";
 
 const dummyCardListData = [
@@ -138,7 +138,7 @@ export default function Home() {
   };
 
   return (
-    <CommunityTemplate
+    <HomeTemplate
       btnListData={{ btnList, selectedBtn, handleSelectedBtn }}
       cardListData={cardListData}
       handleCardData={handleCardData}

@@ -11,8 +11,8 @@ export { GNB, BNB, AppGuide, RoundButton, QuoteCard, QuoteForm, ProfileCard };
 
 // templates
 import LoginTemplate from "./template/LoginTemplate/LoginTemplate";
-import CommunityTemplate from "./template/CommunityTemplate/CommunityTemplate";
+import HomeTemplate from "./template/HomeTemplate/HomeTemplate";
 import WriteTemplate from "./template/WriteTemplate/WriteTemplate";
 import ProfileTemplate from "./template/ProfileTemplate/ProfileTemplate";
 
-export { LoginTemplate, CommunityTemplate, WriteTemplate, ProfileTemplate };
+export { LoginTemplate, HomeTemplate, WriteTemplate, ProfileTemplate };
