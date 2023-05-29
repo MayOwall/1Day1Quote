@@ -1,7 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { ProfileEditForm } from "@/component";
-import { IProfileEditTemplateProps } from "@/type";
 import * as S from "./ProfileEditTemplate.styles";
 
 function ProfileEditTemplate() {
