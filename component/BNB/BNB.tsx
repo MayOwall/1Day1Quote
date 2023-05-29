@@ -13,7 +13,8 @@ function BNB() {
   const isWritePage = pathname === "/write";
   const isHomePage = pathname === "/";
   const isLoginPage = pathname === "/login";
-  const isProfilePage = pathname === `/profile/${userId}`;
+  const isProfilePage =
+    pathname === `/profile/${userId}` || pathname === "/profile/edit";
 
   // 버튼 인터렉션과 현재 페이지에 따른 페이지 이동 핸들러
   const handleBNBBtns = (icon: "write" | "home" | "profile") => {

@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 
 export const Container = styled.div`
   width: calc(100% - 2rem);
-  margin-top: 2rem;
   padding: 1rem 0.5rem;
   position: relative;
 `;
@@ -69,4 +68,5 @@ export const ProfileEditBtn = styled.span`
   right: 0.5rem;
   color: var(--color-main);
   font: var(--font-light12);
+  font-size: 14px;
 `;

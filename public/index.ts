@@ -12,6 +12,7 @@ import ProfileIcon from "./ProfileIcon.svg";
 import mockup1 from "./mockup1.png";
 import mockup2 from "./mockup2.png";
 import kakaologo from "./kakaologo.png";
+import defaultProfileImage from "./defaultProfileImage.png";
 
 export {
   Logo,
@@ -28,4 +29,5 @@ export {
   kakaologo,
   HomeIcon,
   ProfileIcon,
+  defaultProfileImage,
 };

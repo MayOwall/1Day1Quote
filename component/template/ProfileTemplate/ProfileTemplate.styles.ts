@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 export const Container = styled.section`
   width: 100%;
   height: 100%;
+  margin-top: 1rem;
   margin-bottom: 7rem;
   display: flex;
   flex-direction: column;
