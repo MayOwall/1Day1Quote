@@ -3,15 +3,14 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState, useRef, useEffect, useContext } from "react";
 import { saveImageFormData } from "@/hook";
-import { IProfileEditFormProps } from "@/type";
 import * as S from "./ProfileEditForm.styles";
 import { Context } from "@/context";
 
-function ProfileEditForm({ formDataInit }: IProfileEditFormProps) {
-  const { userId, setUserData } = useContext(Context);
+function ProfileEditForm() {
+  const { userId, userData, setUserData } = useContext(Context);
   const router = useRouter();
-  const [formData, setFormData] = useState(formDataInit);
-  const [imagePreview, setImagePreview] = useState(formDataInit.imageURL);
+  const [formData, setFormData] = useState(userData);
+  const [imagePreview, setImagePreview] = useState(userData.imageURL);
   const [isSubmitAble, setSubmitAble] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
