@@ -1,20 +1,24 @@
 "use client";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext } from "react";
-import { HomeIcon, WriteIcon, ProfileIcon } from "@/public";
+import {
+  HomeIcon,
+  WriteIcon,
+  ProfileIcon,
+  defaultProfileImage,
+} from "@/public";
 import { Context } from "@/context";
 import * as S from "./BNB.styles";
 
 function BNB() {
-  const { userId } = useContext(Context);
+  const { userData } = useContext(Context);
   const pathname = usePathname();
-  console.log(pathname);
   const router = useRouter();
   const isWritePage = pathname === "/write";
   const isHomePage = pathname === "/";
   const isLoginPage = pathname === "/login";
-  const isProfilePage =
-    pathname === `/profile/${userId}` || pathname === "/profile/edit";
+  const isProfilePage = pathname?.includes("/profile");
 
   // 버튼 인터렉션과 현재 페이지에 따른 페이지 이동 핸들러
   const handleBNBBtns = (icon: "write" | "home" | "profile") => {
@@ -29,7 +33,7 @@ function BNB() {
       return;
     }
     if (icon === "profile" && !isProfilePage) {
-      router.push(`/profile/${userId}`);
+      router.push(userData ? `/profile/${userData.userId}` : "/login");
       return;
     }
   };
@@ -55,12 +59,23 @@ function BNB() {
             />
           </S.Btn>
           <S.Btn>
-            <ProfileIcon
-              width="22px"
-              height="23px"
-              fill={isProfilePage ? "#FF4264" : "#8c8c8c"}
-              onClick={() => handleBNBBtns("profile")}
-            />
+            {userData && (
+              <Image
+                src={userData.userImageURL || defaultProfileImage}
+                alt="profile-button"
+                width={24}
+                height={24}
+                onClick={() => handleBNBBtns("profile")}
+              />
+            )}
+            {!userData && (
+              <ProfileIcon
+                width="22px"
+                height="23px"
+                fill="#8c8c8c"
+                onClick={() => handleBNBBtns("profile")}
+              />
+            )}
           </S.Btn>
         </S.Container>
       )}
