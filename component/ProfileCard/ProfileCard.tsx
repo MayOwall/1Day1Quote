@@ -22,28 +22,34 @@ function LabelNum({ label, num }: ILabelNumProps) {
   );
 }
 
-function ProfileCard({ userActData }: IProfileCardProps) {
-  const pathname = usePathname();
-  const { userId, userData } = useContext(Context);
-
-  const { nickname, introduce, imageURL } = userData;
+function ProfileCard({ userData, userActData }: IProfileCardProps) {
+  const pathname = usePathname()?.slice(9);
+  const { userData: authData } = useContext(Context);
+  const isSelfProfile = authData.userId === pathname;
+  const { userName, userIntroduce, userImageURL } = userData;
   const { userQuoteNum, userBookmarkNum } = userActData;
+
   return (
     <S.Container>
       <S.UserData>
         <div>
-          <S.UserName>{nickname}</S.UserName>
-          <S.UserIntroduce>{introduce}</S.UserIntroduce>
+          <S.UserName>{userName}</S.UserName>
+          <S.UserIntroduce>{userIntroduce || "자기소개 없음"}</S.UserIntroduce>
         </div>
         <S.UserImage>
-          <Image src={imageURL || defaultProfileImage} fill sizes="30vw" alt="user-portrait" />
+          <Image
+            src={userImageURL || defaultProfileImage}
+            fill
+            sizes="30vw"
+            alt="user-portrait"
+          />
         </S.UserImage>
       </S.UserData>
       <S.UserActData>
         <LabelNum label="작성한 문장 수" num={userQuoteNum} />
         <LabelNum label="저장한 문장 수" num={userBookmarkNum} />
       </S.UserActData>
-      {pathname.includes(userId) && (
+      {isSelfProfile && (
         <Link href="/profile/edit">
           <S.ProfileEditBtn>프로필 편집</S.ProfileEditBtn>
         </Link>

@@ -52,7 +52,9 @@ function ProfileTemplate({
   const { userData, userActData } = profileData;
   return (
     <S.Container>
-      <ProfileCard userData={userData} userActData={userActData} />
+      {profileData && (
+        <ProfileCard userData={userData} userActData={userActData} />
+      )}
       <BtnList
         selectedType={selectedType}
         handleSelectedType={handleSelectedType}

@@ -1,22 +1,10 @@
 "use client";
 
+import { getProfile } from "@/app/api/auth";
 import { ProfileTemplate } from "@/component";
 import { DateFormatter } from "@/hook";
-import { useState } from "react";
-
-const dummyProfileData = {
-  userData: {
-    userId: "user123",
-    userName: "shin_zzang",
-    userIntroduce: "천방지축 어리둥절 빙글빙글",
-    userImageURL:
-      "https://item.kakaocdn.net/do/fd0050f12764b403e7863c2c03cd4d2d7154249a3890514a43687a85e6b6cc82",
-  },
-  userActData: {
-    userQuoteNum: 2,
-    userBookmarkNum: 2,
-  },
-};
+import { usePathname } from "next/navigation";
+import { useLayoutEffect, useEffect, useState } from "react";
 
 const dummyCardListData = [
   {
@@ -59,7 +47,22 @@ const dummyCardListData = [
   },
 ];
 
+interface IProfileData {
+  userData: {
+    userName: string;
+    userId: string;
+    userIntroduce: string;
+    userImageURL: string;
+  };
+  userActData: {
+    userQuoteNum: number;
+    userBookmarkNum: number;
+  };
+}
+
 export default function ProfilePage() {
+  const pathId = usePathname()?.replace("/profile/", "") || "";
+  const [profileData, setProfileData] = useState<IProfileData | null>(null);
   const [cardListData, setCardListData] = useState(dummyCardListData);
   const [selectedType, setSelectedType] = useState<"write" | "bookmark">(
     "write"
@@ -144,13 +147,57 @@ export default function ProfilePage() {
     }
   };
 
+  const getUserDBDataInit = async () => {
+    const data = await getProfile(pathId);
+    if (!data.success) {
+      alert("에러 발생");
+      return;
+    }
+    const {
+      userId,
+      userImageURL,
+      userIntroduce,
+      userName,
+      userQuoteCount,
+      userQuoteList,
+      userBookmarkCount,
+      userBookmarkList,
+    } = data.userDBData;
+
+    const nextProfileData = {
+      userData: {
+        userId,
+        userName,
+        userIntroduce,
+        userImageURL,
+      },
+      userActData: {
+        userQuoteNum: userQuoteCount,
+        userBookmarkNum: userBookmarkCount,
+      },
+    };
+    setProfileData(() => nextProfileData);
+  };
+
+  useLayoutEffect(() => {
+    getUserDBDataInit();
+  }, []);
+
+  useEffect(() => {
+    console.log("profileData", profileData);
+  }, [profileData]);
+
   return (
-    <ProfileTemplate
-      profileData={dummyProfileData}
-      selectedType={selectedType}
-      handleSelectedType={handleSelectedType}
-      cardListData={cardListData}
-      handleCardData={handleCardData}
-    />
+    <>
+      {!!profileData && (
+        <ProfileTemplate
+          profileData={profileData}
+          selectedType={selectedType}
+          handleSelectedType={handleSelectedType}
+          cardListData={cardListData}
+          handleCardData={handleCardData}
+        />
+      )}
+    </>
   );
 }
