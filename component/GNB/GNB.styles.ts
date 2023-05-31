@@ -24,6 +24,7 @@ export const Container = styled.div`
     border: none;
     background: none;
     font: var(--font-light16);
+    font-size: 14px;
   }
 `;
 
@@ -40,4 +41,5 @@ export const Logo = styled.div`
 export const LoginBtn = styled.button``;
 export const LogoutBtn = styled.button`
   color: var(--color2);
+  opacity: 50%;
 `;

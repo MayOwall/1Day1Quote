@@ -1,13 +1,17 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import { useContext } from "react";
 import { Logo } from "@/public";
-import { IGNBProps } from "@/type";
+import { Context } from "@/context";
 import * as S from "./GNB.styles";
 
-function GNB({ isAuth }: IGNBProps) {
-  const isLoginPage = usePathname().includes("/login");
-  const handleLogoutBtn = () => {};
+function GNB() {
+  const { userData } = useContext(Context);
+  const pathname = usePathname();
+  const isLoginPage = pathname ? pathname.includes("/login") : false;
+
   return (
     <>
       {isLoginPage && <></>}
@@ -17,12 +21,13 @@ function GNB({ isAuth }: IGNBProps) {
             <Logo width="35px" height="35px" />
             <span>1DAY 1QUOTE</span>
           </S.Logo>
-          {isAuth ? (
-            <S.LogoutBtn onClick={handleLogoutBtn}>로그아웃</S.LogoutBtn>
-          ) : (
+          {!userData && (
             <Link href="/login">
               <S.LoginBtn>로그인</S.LoginBtn>
             </Link>
+          )}
+          {userData && (
+              <S.LogoutBtn onClick={() => signOut({callbackUrl: '/'})}>로그아웃</S.LogoutBtn>
           )}
         </S.Container>
       )}
