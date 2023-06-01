@@ -1,8 +1,18 @@
+import { postImage } from "@/app/api/write";
+
 export const saveImageFormData = async (
   e: React.ChangeEvent<HTMLInputElement>
 ) => {
   try {
-    return "https://img3.daumcdn.net/thumb/R658x0.q70/?fname=http://t1.daumcdn.net/news/201503/06/ned/20150306160815069.jpeg";
+    let formData = new FormData();
+    if (e.target.files) {
+      formData.append("image", e.target.files[0]);
+      const { result, data } = await postImage(formData);
+      if (!result) throw new Error();
+      return data.imageURL;
+    } else {
+      return "error";
+    }
   } catch (e) {
     return "error";
   }

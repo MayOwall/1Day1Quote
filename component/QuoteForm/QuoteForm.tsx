@@ -1,8 +1,11 @@
 "use client";
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
-import { CardIdFormatter, saveImageFormData } from "@/hook";
+import { useState, useRef, useEffect, useContext } from "react";
+import uuid4 from "uuid4";
+import { DateFormatter, saveImageFormData } from "@/hook";
 import { IQuoteFormProps } from "@/type";
+import { postQuoteCard } from "@/app/api/write";
+import { Context } from "@/context";
 import * as S from "./QuoteForm.styles";
 
 const formDataInit = {
@@ -80,13 +83,39 @@ function QuoteForm({ handleCardData }: IQuoteFormProps) {
   };
 
   // 오늘의 문장 제출 핸들러
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isSubmitAble) return;
-    setImagePreview(() => "");
-    setFormData(formDataInit);
-    handleCardData("add", CardIdFormatter(), formData);
-    // 서버로의 문장 제출 작업 추가 필요!!
+  const onSubmit = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault();
+      if (!isSubmitAble) return;
+      setImagePreview(() => "");
+      setFormData(formDataInit);
+
+      // 프론트엔드 카드 리스트 추가
+      const newCardId = uuid4();
+      handleCardData("add", newCardId, formData);
+
+      // 토큰 가져오기
+      const authToken = sessionStorage.getItem("authToken");
+      if (!authToken) return;
+
+      // 새로운 카드 데이터 생성
+      const newQuoteCardData = {
+        token: authToken,
+        cardData: {
+          _id: newCardId,
+          date: DateFormatter(new Date()),
+          quote: formData.quote,
+          speaker: formData.speaker,
+          imageURL: formData.imageURL,
+        },
+      };
+
+      // DB로 새 카드 데이터 전송
+      const { data } = await postQuoteCard(newQuoteCardData);
+    } catch (e) {
+      console.error(e);
+      return;
+    }
   };
 
   // Quote값이 변경될 때마다 자동 갱신되는 QuoteInput 높이
