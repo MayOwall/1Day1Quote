@@ -12,7 +12,7 @@ import { Context } from "@/context";
 import * as S from "./BNB.styles";
 
 function BNB() {
-  const { userData } = useContext(Context);
+  const { authData } = useContext(Context);
   const pathname = usePathname();
   const router = useRouter();
   const isWritePage = pathname === "/write";
@@ -33,7 +33,7 @@ function BNB() {
       return;
     }
     if (icon === "profile" && !isProfilePage) {
-      router.push(userData ? `/profile/${userData.userId}` : "/login");
+      router.push(authData ? `/profile/${authData.userId}` : "/login");
       return;
     }
   };
@@ -59,16 +59,16 @@ function BNB() {
             />
           </S.Btn>
           <S.Btn>
-            {userData && (
+            {authData && (
               <Image
-                src={userData.userImageURL || defaultProfileImage}
+                src={authData.userImageURL || defaultProfileImage}
                 alt="profile-button"
                 width={24}
                 height={24}
                 onClick={() => handleBNBBtns("profile")}
               />
             )}
-            {!userData && (
+            {!authData && (
               <ProfileIcon
                 width="22px"
                 height="23px"

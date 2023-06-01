@@ -1,4 +1,6 @@
 "use client";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { WriteTemplate } from "@/component";
 import { DateFormatter } from "@/hook";
@@ -45,7 +47,13 @@ const dummyCardListData = [
 ];
 
 export default function WritePage() {
+  const router = useRouter();
   const [cardListData, setCardListData] = useState(dummyCardListData);
+  const session = useSession();
+
+  if (session.status !== "authenticated") {
+    router.push("/login");
+  }
 
   // 특정 id의 카드를 추가, 수정, 삭제하는 핸들러
   const handleCardData = (
