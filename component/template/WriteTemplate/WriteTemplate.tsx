@@ -1,21 +1,11 @@
 "use client";
-import { QuoteForm, QuoteCard } from "@/component";
-import { IWriteTemplateProps } from "@/type";
+import { QuoteForm } from "@/component";
 import * as S from "./WriteTemplate.styles";
 
-function WriteTemplate({ cardListData, handleCardData }: IWriteTemplateProps) {
+function WriteTemplate() {
   return (
     <S.Container>
-      <QuoteForm handleCardData={handleCardData} />
-      <S.CardList>
-        {cardListData.map((cardData, idx) => (
-          <QuoteCard
-            key={idx}
-            cardData={cardData}
-            handleCardData={handleCardData}
-          />
-        ))}
-      </S.CardList>
+      <QuoteForm />
     </S.Container>
   );
 }

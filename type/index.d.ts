@@ -115,6 +115,16 @@ interface IProfileTemplateProps extends IProfileBtnListProps {
   handleCardData: ThandleCardData;
 }
 
+interface ICreateQuoteCardData {
+  token: string;
+  cardData: {
+    _id: string;
+    date: string;
+    quote: string;
+    speaker: string;
+    imageURL: string;
+  };
+}
 export {
   IGNBProps,
   IRoundButtonProps,
@@ -130,4 +140,5 @@ export {
   IProfileCardProps,
   IProfileBtnListProps,
   IProfileTemplateProps,
+  ICreateQuoteCardData,
 };

@@ -3,14 +3,16 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState, useRef, useEffect, useContext } from "react";
 import { saveImageFormData } from "@/hook";
-import * as S from "./ProfileEditForm.styles";
 import { Context } from "@/context";
+import * as S from "./ProfileEditForm.styles";
 
 function ProfileEditForm() {
-  const { userId, userData, setUserData } = useContext(Context);
+  const { authData, setAuthData } = useContext(Context);
   const router = useRouter();
-  const [formData, setFormData] = useState(userData);
-  const [imagePreview, setImagePreview] = useState(userData.imageURL);
+  const [formData, setFormData] = useState(authData);
+  const [imagePreview, setImagePreview] = useState(
+    authData ? authData.userImageURL : ""
+  );
   const [isSubmitAble, setSubmitAble] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -37,16 +39,16 @@ function ProfileEditForm() {
     const nextImageURL = await saveImageFormData(e);
     const nextFormData = {
       ...formData,
-      imageURL: nextImageURL,
+      userImageURL: nextImageURL,
     };
     setFormData(nextFormData);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setUserData(() => formData);
+    setAuthData(() => formData);
     // 서버에 유저 데이터 저장 작업 필요
-    router.push(`/profile/${userId}`);
+    router.push(`/profile/${authData.userId}`);
   };
 
   // 이미지 추가 & 이미지 변경 버튼 핸들러
@@ -63,7 +65,7 @@ function ProfileEditForm() {
     setImagePreview(() => "");
     const nextFormData = {
       ...formData,
-      imageURL: "",
+      userImageURL: "",
     };
     setFormData(() => nextFormData);
   };
@@ -83,55 +85,60 @@ function ProfileEditForm() {
   };
 
   useEffect(() => {
-    if (!!formData.nickname && !!formData.imageURL) {
+    if (!!formData.nickname && !!formData.userImageURL) {
       setSubmitAble(true);
     }
   }, [formData]);
 
   return (
-    <S.Container onSubmit={handleSubmit}>
-      <div>
-        <S.Label htmlFor="nickname">닉네임</S.Label>
-        <S.Input
-          name="nickname"
-          value={formData.nickname}
-          onChange={handleNickname}
-        />
-        <S.Label htmlFor="introduce">한줄 자기소개</S.Label>
-        <S.Input
-          name="introduce"
-          value={formData.introduce}
-          onChange={handleIntroduce}
-        />
-        <S.ImageContainer>
-          <S.Label htmlFor="imageURL">프로필 사진</S.Label>
-          <S.ImagePreview>
-            {imagePreview && (
-              <Image src={imagePreview} fill sizes="100vw" alt="preview" />
-            )}
-            {!imagePreview && <small>이미지 없음</small>}
-          </S.ImagePreview>
-          <S.Input
-            type="file"
-            accept="image/*"
-            name="imageURL"
-            ref={imageInputRef}
-            onChange={handleImageURL}
-          />
+    <>
+      {!!authData && (
+        <S.Container onSubmit={handleSubmit}>
           <div>
-            <S.ImageBtn onClick={handleImageBtn}>
-              이미지 {!!imagePreview ? "변경" : "추가"}
-            </S.ImageBtn>
-            {!!imagePreview && (
-              <S.ImageDelBtn onClick={handleImageDelBtn}>
-                이미지 삭제
-              </S.ImageDelBtn>
-            )}
+            <S.Label htmlFor="nickname">닉네임</S.Label>
+            <S.Input
+              name="nickname"
+              value={formData.nickname}
+              onChange={handleNickname}
+            />
+            <S.Label htmlFor="introduce">한줄 자기소개</S.Label>
+            <S.Input
+              name="introduce"
+              value={formData.introduce}
+              onChange={handleIntroduce}
+            />
+            <S.ImageContainer>
+              <S.Label htmlFor="imageURL">프로필 사진</S.Label>
+              <S.ImagePreview>
+                {imagePreview && (
+                  <Image src={imagePreview} fill sizes="100vw" alt="preview" />
+                )}
+                {!imagePreview && <small>이미지 없음</small>}
+              </S.ImagePreview>
+              <S.Input
+                type="file"
+                accept="image/*"
+                name="imageURL"
+                ref={imageInputRef}
+                onChange={handleImageURL}
+              />
+              <div>
+                <S.ImageBtn onClick={handleImageBtn}>
+                  이미지 {!!imagePreview ? "변경" : "추가"}
+                </S.ImageBtn>
+                {!!imagePreview && (
+                  <S.ImageDelBtn onClick={handleImageDelBtn}>
+                    이미지 삭제
+                  </S.ImageDelBtn>
+                )}
+              </div>
+            </S.ImageContainer>
           </div>
-        </S.ImageContainer>
-      </div>
-      <S.SubmitBtn isSubmitAble={isSubmitAble}>프로필 변경하기</S.SubmitBtn>
-    </S.Container>
+          <S.SubmitBtn isSubmitAble={isSubmitAble}>프로필 변경하기</S.SubmitBtn>
+        </S.Container>
+      )}
+      {!authData && <></>}
+    </>
   );
 }
 

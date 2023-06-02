@@ -8,7 +8,7 @@ import { Context } from "@/context";
 import * as S from "./GNB.styles";
 
 function GNB() {
-  const { userData } = useContext(Context);
+  const { authData } = useContext(Context);
   const pathname = usePathname();
   const isLoginPage = pathname ? pathname.includes("/login") : false;
 
@@ -21,13 +21,15 @@ function GNB() {
             <Logo width="35px" height="35px" />
             <span>1DAY 1QUOTE</span>
           </S.Logo>
-          {!userData && (
+          {!authData && (
             <Link href="/login">
               <S.LoginBtn>로그인</S.LoginBtn>
             </Link>
           )}
-          {userData && (
-              <S.LogoutBtn onClick={() => signOut({callbackUrl: '/'})}>로그아웃</S.LogoutBtn>
+          {authData && (
+            <S.LogoutBtn onClick={() => signOut({ callbackUrl: "/" })}>
+              로그아웃
+            </S.LogoutBtn>
           )}
         </S.Container>
       )}
