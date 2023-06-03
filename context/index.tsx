@@ -4,10 +4,10 @@ import { createContext, ReactNode, useState } from "react";
 export const Context = createContext<any>(null);
 
 interface IAuthData {
-  userId: string;
-  userName: string;
-  userImageURL: string;
-  userIntroduce: string;
+  id: string;
+  name: string;
+  imageURL: string;
+  introduce: string;
 }
 
 const ContextProvider = ({ children }: { children: ReactNode }) => {

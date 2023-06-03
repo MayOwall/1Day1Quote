@@ -20,12 +20,13 @@ import {
 } from "@/type";
 import { DateFormatter } from "@/hook";
 import * as S from "./QuoteCard.styles";
-import { postBookmark, postFireNum } from "@/app/api/card";
+import { postBookmark, postFireNum } from "@/api";
 
 // 카드 작성 유저. 클릭시 해당 유저 프로필로 이동
 function Header({ userData, handleDelete }: IQuoteCardHeaderProps) {
   const { id: userId, name, imageURL } = userData;
-  const { id: authId } = useContext(Context).authData;
+  const { authData } = useContext(Context);
+  const authId = authData ? authData.id : null;
   return (
     <S.HeaderContainer>
       <div>
@@ -43,7 +44,7 @@ function Header({ userData, handleDelete }: IQuoteCardHeaderProps) {
           <Link href={`/profile/${userId}`}>{name}</Link>
         </span>
       </div>
-      {userId === authId && (
+      {authId && userId === authId && (
         <S.CardEditBtns>
           <TrashIcon onClick={handleDelete} />
         </S.CardEditBtns>
@@ -111,6 +112,7 @@ function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
   const handleFire = async () => {
     // 1. 프론트 카드의 불꽃값 수정
     handleCardData("fire", cardId);
+    return;
     // 2. 서버 카드의 불꽃값 수정
     const { success } = await postFireNum(
       cardId,
@@ -125,6 +127,7 @@ function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
   const handleBookmark = async () => {
     // 1. 프론트 카드의 북마크값 수정
     handleCardData("bookmark", cardId);
+    return;
     // 2. 서버 카드의 북마크값 수정
     const { success } = await postBookmark(
       cardId,
