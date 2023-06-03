@@ -3,7 +3,8 @@ import NextAuth from "next-auth";
 import KakaoProvider from "next-auth/providers/kakao";
 const KAKAO_CLIENT_ID = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;
 const KAKAO_CLIENT_SECRET = process.env.NEXT_PUBLIC_KAKAO_CLIENT_SECRET;
-const NEXT_PUBLIC_SECRET = process.env.NEXT_PUBLIC_SECRET;
+const SECRET = process.env.NEXT_PUBLIC_SECRET;
+const NEXTAUTH_SECRET = process.env.NEXT_PUBLIC_NEXTAUTH_SECRET;
 
 const authOptions = {
   providers: [
@@ -24,7 +25,10 @@ const authOptions = {
       return session;
     },
   },
-  secret: NEXT_PUBLIC_SECRET,
+  secret: SECRET,
+  jwt: {
+    secret: NEXTAUTH_SECRET,
+  },
 };
 
 export default NextAuth(authOptions);

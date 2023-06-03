@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://1day1quote-be.fly.dev";
 
 // instance axios
 const apiClient = axios.create({
   baseURL: BASE_URL,
-  timeout: 3000,
+  timeout: 5000,
 });
 
 // request interceptors

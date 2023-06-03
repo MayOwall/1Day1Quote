@@ -1,7 +1,7 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useContext } from "react";
+import { useContext, useLayoutEffect } from "react";
 import { LoginTemplate } from "@/component";
 import { Context } from "@/context";
 
@@ -10,23 +10,21 @@ export default function LoginPage() {
   const router = useRouter();
   const session = useSession();
 
-  if (session.status === "authenticated") {
-    const { userId, userName, userImageURL, userIntroduce, authToken }: any =
-      session.data.user;
-
-    const nextAuthData = {
-      userId,
-      userName,
-      userImageURL,
-      userIntroduce,
-    };
-    setAuthData(() => nextAuthData);
-    if (window) {
+  useLayoutEffect(() => {
+    if (session.status === "authenticated") {
+      const { authToken, userId, userName, userImageURL, userIntroduce }: any =
+        session.data.user;
+      const nextAuthData = {
+        userId,
+        userName,
+        userImageURL,
+        userIntroduce,
+      };
+      setAuthData(() => nextAuthData);
       sessionStorage.setItem("authToken", authToken);
+      router.push("/");
     }
-
-    router.push("/");
-  }
+  }, [session]);
 
   return <LoginTemplate />;
 }
