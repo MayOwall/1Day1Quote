@@ -24,15 +24,15 @@ import { postBookmark, postFireNum } from "@/app/api/card";
 
 // 카드 작성 유저. 클릭시 해당 유저 프로필로 이동
 function Header({ userData, handleDelete }: IQuoteCardHeaderProps) {
-  const { userId, name, profileImage } = userData;
-  const currentUserId = useContext(Context).userId;
+  const { id: userId, name, imageURL } = userData;
+  const { id: authId } = useContext(Context).authData;
   return (
     <S.HeaderContainer>
       <div>
         <div>
           <Link href={`/profile/${userId}`}>
             <Image
-              src={profileImage || defaultProfileImage}
+              src={imageURL || defaultProfileImage}
               fill
               sizes="10rem"
               alt="card-user-portrait"
@@ -43,7 +43,7 @@ function Header({ userData, handleDelete }: IQuoteCardHeaderProps) {
           <Link href={`/profile/${userId}`}>{name}</Link>
         </span>
       </div>
-      {userId === currentUserId && (
+      {userId === authId && (
         <S.CardEditBtns>
           <TrashIcon onClick={handleDelete} />
         </S.CardEditBtns>
@@ -59,7 +59,7 @@ function Body({
   handleBookmark,
 }: IQuoteCardBodyProps) {
   const {
-    cardId,
+    id: cardId,
     date,
     imageURL,
     quote,
@@ -97,7 +97,7 @@ function Body({
 
 function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
   const { userData, contentData } = cardData;
-  const { cardId } = contentData;
+  const { id: cardId, isFired, isBookMarked } = contentData;
   const router = useRouter();
   // 이 카드를 삭제하는 핸들러
   const handleDelete = () => {
@@ -113,8 +113,8 @@ function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
     handleCardData("fire", cardId);
     // 2. 서버 카드의 불꽃값 수정
     const { success } = await postFireNum(
-      contentData.id,
-      contentData.isFired ? "fireDown" : "fireUp"
+      cardId,
+      isFired ? "fireDown" : "fireUp"
     );
     if (!success && success.reason === "no authToken") {
       router.push("/login");
@@ -127,8 +127,8 @@ function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
     handleCardData("bookmark", cardId);
     // 2. 서버 카드의 북마크값 수정
     const { success } = await postBookmark(
-      contentData.cardId,
-      contentData.isBookMarked ? "cancelBookmark" : "addBookmark"
+      cardId,
+      isBookMarked ? "cancelBookmark" : "addBookmark"
     );
     if (!success && success.reason === "no authToken") {
       router.push("/login");

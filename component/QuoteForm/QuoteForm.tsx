@@ -6,6 +6,7 @@ import uuid4 from "uuid4";
 import { postQuoteCard } from "@/api";
 import { saveImageFormData } from "@/hook";
 import { Context } from "@/context";
+import { ICreateQuoteCardData } from "@/type";
 import * as S from "./QuoteForm.styles";
 
 const formDataInit = {
@@ -84,21 +85,15 @@ function QuoteForm() {
     setImagePreview(() => "");
   };
 
-  // formData 초기화
-  const initFormData = () => {
-    setImagePreview(() => "");
-    setFormData(formDataInit);
-  };
-
   // 서버로 카드 데이터 전송
-  const postCardData = async (newCardId: string) => {
+  const postCardData = async () => {
     try {
       // 토큰 가져오기
       const authToken = sessionStorage.getItem("authToken");
       if (!authToken) return;
 
       // 새로운 카드 데이터 생성
-      const newQuoteCardData = {
+      const newQuoteCardData: ICreateQuoteCardData = {
         token: authToken,
         userData: {
           id: authData.userId,
@@ -115,26 +110,22 @@ function QuoteForm() {
       };
 
       // DB로 새 카드 데이터 전송
-      const { success } = await postQuoteCard(newQuoteCardData);
-      if (success) router.push("/");
+      const data = await postQuoteCard(newQuoteCardData);
+      return data;
     } catch (e) {
       console.error(e);
-      return;
+      return { success: false };
     }
   };
 
   // 오늘의 문장 제출 핸들러
   const onSubmit = async (e: React.FormEvent) => {
-    // 데이터 초기화
     e.preventDefault();
     if (!isSubmitAble) return;
-    initFormData();
-
-    // 프론트엔드 카드 리스트 추가
-    const newCardId = uuid4();
 
     // 서버로 카드 데이터 전송
-    await postCardData(newCardId);
+    const { success } = await postCardData();
+    if (success) router.push("/");
   };
 
   // Quote값이 변경될 때마다 자동 갱신되는 QuoteInput 높이

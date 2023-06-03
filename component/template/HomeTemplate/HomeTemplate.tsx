@@ -1,11 +1,7 @@
 "use client";
 import { RoundButton, QuoteCard } from "@/component";
 import { AnnounceIcon } from "@/public";
-import {
-  ICommunityBtnListProps,
-  ICommunityTemplateProps,
-  ICardListProps,
-} from "@/type";
+import { IHomeBtnListProps, IHomeTemplateProps, ICardListProps } from "@/type";
 import * as S from "./HomeTemplate.styles";
 
 // 공지사항
@@ -19,7 +15,7 @@ function Announce() {
 }
 
 // 카드 정렬 버튼
-function BtnList({ btnListData }: ICommunityBtnListProps) {
+function BtnList({ btnListData }: IHomeBtnListProps) {
   const { btnList, selectedBtn, handleSelectedBtn } = btnListData;
 
   return (
@@ -58,7 +54,7 @@ function HomeTemplate({
   btnListData,
   cardListData,
   handleCardData,
-}: ICommunityTemplateProps) {
+}: IHomeTemplateProps) {
   return (
     <S.Container>
       <Announce />

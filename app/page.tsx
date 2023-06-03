@@ -24,7 +24,7 @@ export default function Home() {
     // 카드 불 수정
     if (type === "fire" && cardId) {
       const nextCardListData = cardListData.map((cardData) => {
-        if (cardData.contentData.cardId === cardId) {
+        if (cardData.contentData.id === cardId) {
           cardData.contentData.isFired
             ? (cardData.contentData.fireCount -= 1)
             : (cardData.contentData.fireCount += 1);
@@ -41,7 +41,7 @@ export default function Home() {
     // 카드 북마크 수정
     if (type === "bookmark" && cardId) {
       const nextCardListData = cardListData.map((cardData) => {
-        if (cardData.contentData.cardId === cardId) {
+        if (cardData.contentData.id === cardId) {
           cardData.contentData.isBookMarked =
             !cardData.contentData.isBookMarked;
           return cardData;
@@ -56,7 +56,7 @@ export default function Home() {
     // 카드 삭제
     if (type === "delete") {
       const nextCardListData = cardListData.filter(
-        (v) => v.contentData.cardId !== cardId
+        (v) => v.contentData.id !== cardId
       );
       setCardListData(nextCardListData);
       return;

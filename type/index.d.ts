@@ -1,48 +1,23 @@
-interface IGNBProps {
-  isAuth: boolean;
-}
-
+// Round Button
 interface IRoundButtonProps {
   isSelected: boolean;
   children: string;
   handleSelect: (v: boolean) => void;
 }
 
-type TBtn = "최신순" | "이번주 인기" | "역대 최고 인기";
-
-interface ICommunityBtnListProps {
-  btnListData: {
-    btnList: TBtn[];
-    selectedBtn: TBtn;
-    handleSelectedBtn: (selectedBtn: TBtn) => void;
-  };
-}
-
-interface ICardListProps {
-  cardListData: IQuoteCardData[];
-  handleCardData: ThandleCardData;
-}
-
-interface ICommunityTemplateProps extends ICommunityBtnListProps {
-  isLoading: boolean;
-  isLast: boolean;
-  cardListData: IQuoteCardData[];
-  handleCardData: THandleCardData;
-}
-
 /*--QuoteCard--*/
 // QuoteCard의 유저 데이터 타입
 interface IQuoteCardUserData {
-  userId: string;
+  id: string;
   name: string;
-  profileImage: string;
+  imageURL: string;
 }
 
 // QuoteCard의 콘텐츠 데이터 타입
 interface IQuoteCardContentData {
-  cardId: string;
+  id: string;
   date: string;
-  imageURL?: string;
+  imageURL: string;
   quote: string;
   speaker: string;
   fireCount: number;
@@ -51,9 +26,22 @@ interface IQuoteCardContentData {
 }
 
 // QuoteCard의 전체 데이터 타입
-export interface IQuoteCardData {
+interface IQuoteCardData {
   userData: IQuoteCardUserData;
   contentData: IQuoteCardContentData;
+}
+
+// QuoteCard의 헤더 타입
+interface ICQuoteCardHeaderProps {
+  userData: IQuoteCardUserData;
+  handleDelete: () => void;
+}
+
+// QuoteCard의 바디 타입
+interface IQuoteCardBodyProps {
+  contentData: IQuoteCardContentData;
+  handleFire: () => void;
+  handleBookmark: () => void;
 }
 
 // handleCardData
@@ -67,28 +55,50 @@ type ThandleCardData = (
   }
 ) => void;
 
-// QuoteCard의 헤더 타입
-interface ICQuoteCardHeaderProps {
-  userData: IQuoteCardUserData;
-  handleDelete: (_id: string) => void;
-}
-
-// QuoteCard의 바디 타입
-interface IQuoteCardBodyProps {
-  contentData: IQuoteCardContentData;
-  handleFire: () => void;
-  handleBookmark: () => void;
-}
-
 // QuoteCard의 프롭 타입
 interface IQuoteCardProps {
   cardData: IQuoteCardData;
   handleCardData: ThandleCardData;
 }
 
-interface IQuoteFormProps {
+interface ICreateQuoteCardData {
+  token: string;
+  userData: {
+    id: string;
+    name: string;
+    imageURL: string;
+  };
+  contentData: {
+    id: string;
+    date: number;
+    imageURL: string;
+    quote: string;
+    speaker: string;
+  };
+}
+
+interface ICardListProps {
+  cardListData: IQuoteCardData[];
   handleCardData: ThandleCardData;
 }
+
+type TBtn = "최신순" | "역대 최고 인기";
+
+interface IHomeBtnListProps {
+  btnListData: {
+    btnList: TBtn[];
+    selectedBtn: TBtn;
+    handleSelectedBtn: (selectedBtn: TBtn) => void;
+  };
+}
+
+interface IHomeTemplateProps extends IHomeBtnListProps {
+  isLoading: boolean;
+  isLast: boolean;
+  cardListData: IQuoteCardData[];
+  handleCardData: THandleCardData;
+}
+
 interface IWriteTemplateProps {
   cardListData: IQuoteCardData[];
   handleCardData: ThandleCardData;
@@ -118,36 +128,20 @@ interface IProfileTemplateProps extends IProfileBtnListProps {
   handleCardData: ThandleCardData;
 }
 
-interface ICreateQuoteCardData {
-  token: string;
-  userData: {
-    id: string;
-    name: string;
-    imageURL: string;
-  };
-  contentData: {
-    id: string;
-    date: number;
-    imageURL: string;
-    quote: string;
-    speaker: string;
-  };
-}
 export {
-  IGNBProps,
   IRoundButtonProps,
+  IQuoteCardData,
   IQuoteCardHeaderProps,
   IQuoteCardBodyProps,
   IQuoteCardProps,
-  ICommunityBtnListProps,
+  ICreateQuoteCardData,
   ICardListProps,
-  ICommunityTemplateProps,
+  IHomeBtnListProps,
+  IHomeTemplateProps,
   IQuoteFormProps,
   IWriteTemplateProps,
   TBtn,
   IProfileCardProps,
   IProfileBtnListProps,
   IProfileTemplateProps,
-  ICreateQuoteCardData,
-  IQuoteCardData,
 };
