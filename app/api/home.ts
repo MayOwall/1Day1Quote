@@ -1,6 +1,6 @@
 import apiClient from "./apiClient";
 
-const getCardList = async (page: number) => {
-  const { data } = await apiClient.get(`/card/list?page=${page}`);
+const getCardList = async (pageNum: number) => {
+  const { data } = await apiClient.get(`/quoteCard/list?page=${pageNum}`);
   return data;
 };
