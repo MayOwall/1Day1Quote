@@ -1,9 +1,11 @@
 "use client";
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect, useContext } from "react";
 import uuid4 from "uuid4";
-import { DateFormatter, saveImageFormData } from "@/hook";
 import { postQuoteCard } from "@/app/api/write";
+import { saveImageFormData } from "@/hook";
+import { Context } from "@/context";
 import * as S from "./QuoteForm.styles";
 
 const formDataInit = {
@@ -13,6 +15,8 @@ const formDataInit = {
 };
 
 function QuoteForm() {
+  const router = useRouter();
+  const { authData } = useContext(Context);
   const [formData, setFormData] = useState(formDataInit);
   const [imagePreview, setImagePreview] = useState("");
   const [quoteHeight, setQuoteHeight] = useState(30);
@@ -96,17 +100,23 @@ function QuoteForm() {
       // 새로운 카드 데이터 생성
       const newQuoteCardData = {
         token: authToken,
-        cardData: {
-          _id: newCardId,
-          date: DateFormatter(new Date()),
+        userData: {
+          id: authData.userId,
+          name: authData.userName,
+          imageURL: authData.userImageURL,
+        },
+        contentData: {
+          id: uuid4(),
+          date: new Date().getTime(),
+          imageURL: formData.imageURL,
           quote: formData.quote,
           speaker: formData.speaker,
-          imageURL: formData.imageURL,
         },
       };
 
       // DB로 새 카드 데이터 전송
-      const { data } = await postQuoteCard(newQuoteCardData);
+      const { success } = await postQuoteCard(newQuoteCardData);
+      if (success) router.push("/");
     } catch (e) {
       console.error(e);
       return;

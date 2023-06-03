@@ -10,12 +10,14 @@ import {
   BookmarkFill,
   BookmarkVacant,
   TrashIcon,
+  defaultProfileImage,
 } from "@/public";
 import {
   IQuoteCardHeaderProps,
   IQuoteCardBodyProps,
   IQuoteCardProps,
 } from "@/type";
+import { DateFormatter } from "@/hook";
 import * as S from "./QuoteCard.styles";
 
 // 카드 작성 유저. 클릭시 해당 유저 프로필로 이동
@@ -28,7 +30,7 @@ function Header({ userData, handleDelete }: IQuoteCardHeaderProps) {
         <div>
           <Link href={`/profile/${userId}`}>
             <Image
-              src={profileImage}
+              src={profileImage || defaultProfileImage}
               fill
               sizes="10rem"
               alt="card-user-portrait"
@@ -66,7 +68,7 @@ function Body({
   } = contentData;
   return (
     <S.BodyContainer data-_id={cardId}>
-      <S.BodyDate>{date}</S.BodyDate>
+      <S.BodyDate>{DateFormatter(new Date(date))}</S.BodyDate>
       {imageURL && (
         <S.BodyImage className="card-image">
           <Image src={imageURL} fill sizes="100vw" alt="card-image" />
@@ -119,7 +121,7 @@ function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
     // 3. 서버 프로필 북마크 수정
   };
   return (
-    <S.Container>
+    <S.Container className="quoteCard">
       <Header userData={userData} handleDelete={handleDelete} />
       <Body
         contentData={contentData}

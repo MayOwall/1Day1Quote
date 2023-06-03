@@ -1,91 +1,17 @@
 "use client";
-import { useState } from "react";
+import { useState, useLayoutEffect, useEffect, useRef } from "react";
 import { HomeTemplate } from "@/component";
-import { TBtn } from "@/type";
-
-const dummyCardListData = [
-  {
-    userData: {
-      userId: "user123",
-      name: "shin_zzang",
-      profileImage:
-        "https://item.kakaocdn.net/do/fd0050f12764b403e7863c2c03cd4d2d7154249a3890514a43687a85e6b6cc82",
-    },
-    contentData: {
-      cardId: "cardId1",
-      date: "2023.03.12",
-      imageURL:
-        "https://sojoong.joins.com/wp-content/uploads/sites/4/2018/12/bodo_still06.jpg",
-      quote: "첫번째 카드",
-      speaker: "짱구",
-      fireCount: 123,
-      isFired: false,
-      isBookMarked: false,
-    },
-  },
-  {
-    userData: {
-      userId: "user456",
-      name: "boe-zzang",
-      profileImage:
-        "https://cdn.themission.co.kr/news/photo/202211/58650_63198_2559.jpg",
-    },
-    contentData: {
-      cardId: "cardId2",
-      imageURL:
-        "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/tr/2023/04/05/2757ae48-7932-4091-9611-44aa691bd979.jpg",
-      quote: "두번째 카드",
-      speaker: "짱구",
-      date: "2023.03.13",
-      fireCount: 42,
-      isFired: true,
-      isBookMarked: false,
-    },
-  },
-  {
-    userData: {
-      userId: "user123",
-      name: "shin_zzang",
-      profileImage:
-        "https://item.kakaocdn.net/do/fd0050f12764b403e7863c2c03cd4d2d7154249a3890514a43687a85e6b6cc82",
-    },
-    contentData: {
-      cardId: "cardId3",
-      date: "2023.03.12",
-      imageURL:
-        "https://sojoong.joins.com/wp-content/uploads/sites/4/2018/12/bodo_still06.jpg",
-      quote: "세번째 카드",
-      speaker: "짱구",
-      fireCount: 123,
-      isFired: false,
-      isBookMarked: false,
-    },
-  },
-  {
-    userData: {
-      userId: "user456",
-      name: "boe-zzang",
-      profileImage:
-        "https://cdn.themission.co.kr/news/photo/202211/58650_63198_2559.jpg",
-    },
-    contentData: {
-      cardId: "cardId4",
-      date: "2023.03.12",
-      imageURL:
-        "https://sojoong.joins.com/wp-content/uploads/sites/4/2018/12/bodo_still06.jpg",
-      quote: "네번째 카드",
-      speaker: "짱구",
-      fireCount: 123,
-      isFired: false,
-      isBookMarked: false,
-    },
-  },
-];
+import { TBtn, IQuoteCardData } from "@/type";
+import { getCardList } from "./api/home";
 
 export default function Home() {
-  const btnList: TBtn[] = ["최신순", "이번주 인기", "역대 최고 인기"];
-  const [cardListData, setCardListData] = useState(dummyCardListData);
+  const btnList: TBtn[] = ["최신순", "역대 최고 인기"];
+  const [cardListData, setCardListData] = useState<IQuoteCardData[]>([]);
   const [selectedBtn, setSelectedBtn] = useState<TBtn>("최신순");
+  const [pageNum, setPageNum] = useState(1);
+  const [isLast, setIsLast] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const observer = useRef<any>(null);
 
   // 선택한 버튼 값 핸들러
   const handleSelectedBtn = (selectedBtn: TBtn) => setSelectedBtn(selectedBtn);
@@ -137,8 +63,71 @@ export default function Home() {
     }
   };
 
+  // 카드 리스트 조회 및 set 핸들러
+  const getHomepageCardlistData = async () => {
+    const {
+      data,
+    }: {
+      data: {
+        isLast: boolean;
+        cardListData: IQuoteCardData[];
+      };
+    } = await getCardList(selectedBtn, pageNum);
+
+    data.isLast && setIsLast(true);
+
+    const nextCardListData = [...cardListData, ...data.cardListData];
+
+    setCardListData(() => nextCardListData);
+    setLoading(() => false);
+  };
+
+  // 페이지 넘버 변경 때마다 card list 업데이트
+  useLayoutEffect(() => {
+    if (!isLast && !isLoading) {
+      setLoading(true);
+      getHomepageCardlistData();
+    }
+  }, [pageNum]);
+
+  // 카드 타입 변경 때마다 card list 변경
+  useLayoutEffect(() => {
+    setLoading(true);
+    setCardListData(() => []);
+    setPageNum(() => 1);
+    getHomepageCardlistData();
+  }, [selectedBtn]);
+
+  // cardListData 변경 때마다 observer 부여
+  useEffect(() => {
+    const quoteCardList = document.querySelectorAll(".quoteCard");
+    const lastQuoteCard = quoteCardList[quoteCardList.length - 1];
+    if (!!lastQuoteCard) {
+      observer.current.observe(lastQuoteCard);
+    }
+  }, [cardListData]);
+
+  // 무한스크롤 초기 세팅
+  useEffect(() => {
+    const observerOption = { threshold: 0.1, rootMargin: "100px 0px" };
+    const observerCallback = (entries: any, observer: any) => {
+      entries.forEach((entry: any) => {
+        if (entry.isIntersecting) {
+          observer.unobserve(entry.target);
+          setPageNum((v) => v + 1);
+        }
+      });
+    };
+    observer.current = new IntersectionObserver(
+      observerCallback,
+      observerOption
+    );
+  }, []);
+
   return (
     <HomeTemplate
+      isLoading={isLoading}
+      isLast={isLast}
       btnListData={{ btnList, selectedBtn, handleSelectedBtn }}
       cardListData={cardListData}
       handleCardData={handleCardData}

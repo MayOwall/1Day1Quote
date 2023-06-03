@@ -23,9 +23,12 @@ interface ICardListProps {
   handleCardData: ThandleCardData;
 }
 
-interface ICommunityTemplateProps
-  extends ICommunityBtnListProps,
-    ICardListProps {}
+interface ICommunityTemplateProps extends ICommunityBtnListProps {
+  isLoading: boolean;
+  isLast: boolean;
+  cardListData: IQuoteCardData[];
+  handleCardData: THandleCardData;
+}
 
 /*--QuoteCard--*/
 // QuoteCard의 유저 데이터 타입
@@ -48,7 +51,7 @@ interface IQuoteCardContentData {
 }
 
 // QuoteCard의 전체 데이터 타입
-interface IQuoteCardData {
+export interface IQuoteCardData {
   userData: IQuoteCardUserData;
   contentData: IQuoteCardContentData;
 }
@@ -117,12 +120,17 @@ interface IProfileTemplateProps extends IProfileBtnListProps {
 
 interface ICreateQuoteCardData {
   token: string;
-  cardData: {
-    _id: string;
-    date: string;
+  userData: {
+    id: string;
+    name: string;
+    imageURL: string;
+  };
+  contentData: {
+    id: string;
+    date: number;
+    imageURL: string;
     quote: string;
     speaker: string;
-    imageURL: string;
   };
 }
 export {
@@ -141,4 +149,5 @@ export {
   IProfileBtnListProps,
   IProfileTemplateProps,
   ICreateQuoteCardData,
+  IQuoteCardData,
 };

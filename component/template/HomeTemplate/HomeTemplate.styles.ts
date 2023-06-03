@@ -8,6 +8,12 @@ export const Container = styled.section`
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
+
+  > small {
+    font: var(--font-light16);
+    color: var(--color2);
+    opacity: 50%;
+  }
 `;
 
 export const Announce = styled.aside`
@@ -34,6 +40,6 @@ export const ButtonContainer = styled.div`
 export const CardList = styled.div`
   width: calc(100% - 2rem);
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   gap: 1rem;
 `;

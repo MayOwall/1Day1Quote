@@ -53,6 +53,8 @@ function CardList({ cardListData, handleCardData }: ICardListProps) {
 }
 
 function HomeTemplate({
+  isLast,
+  isLoading,
   btnListData,
   cardListData,
   handleCardData,
@@ -62,6 +64,8 @@ function HomeTemplate({
       <Announce />
       <BtnList btnListData={btnListData} />
       <CardList cardListData={cardListData} handleCardData={handleCardData} />
+      {isLoading && <small>loading...</small>}
+      {isLast && <small>마지막 카드입니다.</small>}
     </S.Container>
   );
 }
