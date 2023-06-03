@@ -1,10 +1,10 @@
 "use client";
 
-import { getProfile } from "@/app/api/auth";
-import { ProfileTemplate } from "@/component";
-import { DateFormatter } from "@/hook";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useEffect, useState } from "react";
+import { getProfile } from "@/api";
+import { ProfileTemplate } from "@/component";
+import { DateFormatter } from "@/hook";
 
 const dummyCardListData = [
   {

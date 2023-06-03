@@ -2,7 +2,7 @@
 import { useState, useLayoutEffect, useEffect, useRef } from "react";
 import { HomeTemplate } from "@/component";
 import { TBtn, IQuoteCardData } from "@/type";
-import { getCardList } from "./api/home";
+import { getCardList } from "@/api";
 
 export default function Home() {
   const btnList: TBtn[] = ["최신순", "역대 최고 인기"];

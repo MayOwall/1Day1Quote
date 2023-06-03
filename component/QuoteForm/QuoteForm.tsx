@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect, useContext } from "react";
 import uuid4 from "uuid4";
-import { postQuoteCard } from "@/app/api/write";
+import { postQuoteCard } from "@/api";
 import { saveImageFormData } from "@/hook";
 import { Context } from "@/context";
 import * as S from "./QuoteForm.styles";

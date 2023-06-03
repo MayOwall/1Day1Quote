@@ -1,4 +1,4 @@
-import { postImage } from "@/app/api/write";
+import { postImage } from "@/api";
 
 export const saveImageFormData = async (
   e: React.ChangeEvent<HTMLInputElement>
