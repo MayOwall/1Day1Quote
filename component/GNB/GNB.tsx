@@ -12,6 +12,11 @@ function GNB() {
   const pathname = usePathname();
   const isLoginPage = pathname ? pathname.includes("/login") : false;
 
+  const handleLogout = () => {
+    sessionStorage.removeItem("authToken");
+    signOut({ callbackUrl: "/" });
+  };
+
   return (
     <>
       {isLoginPage && <></>}
@@ -27,9 +32,7 @@ function GNB() {
             </Link>
           )}
           {authData && (
-            <S.LogoutBtn onClick={() => signOut({ callbackUrl: "/" })}>
-              로그아웃
-            </S.LogoutBtn>
+            <S.LogoutBtn onClick={handleLogout}>로그아웃</S.LogoutBtn>
           )}
         </S.Container>
       )}

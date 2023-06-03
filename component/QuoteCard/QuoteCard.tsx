@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { Context } from "@/context";
 import { useContext } from "react";
@@ -19,6 +20,7 @@ import {
 } from "@/type";
 import { DateFormatter } from "@/hook";
 import * as S from "./QuoteCard.styles";
+import { postBookmark, postFireNum } from "@/app/api/card";
 
 // 카드 작성 유저. 클릭시 해당 유저 프로필로 이동
 function Header({ userData, handleDelete }: IQuoteCardHeaderProps) {
@@ -96,6 +98,7 @@ function Body({
 function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
   const { userData, contentData } = cardData;
   const { cardId } = contentData;
+  const router = useRouter();
   // 이 카드를 삭제하는 핸들러
   const handleDelete = () => {
     // 1. 프론트 카드 리스트 수정
@@ -105,20 +108,31 @@ function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
   };
 
   // 이 카드의 불꽃 값을 수정하는 핸들러
-  const handleFire = () => {
+  const handleFire = async () => {
     // 1. 프론트 카드의 불꽃값 수정
     handleCardData("fire", cardId);
-
     // 2. 서버 카드의 불꽃값 수정
+    const { success } = await postFireNum(
+      contentData.id,
+      contentData.isFired ? "fireDown" : "fireUp"
+    );
+    if (!success && success.reason === "no authToken") {
+      router.push("/login");
+    }
   };
 
   // 이 카드의 북마크 값을 수정하는 핸들러
-  const handleBookmark = () => {
+  const handleBookmark = async () => {
     // 1. 프론트 카드의 북마크값 수정
     handleCardData("bookmark", cardId);
-
     // 2. 서버 카드의 북마크값 수정
-    // 3. 서버 프로필 북마크 수정
+    const { success } = await postBookmark(
+      contentData.cardId,
+      contentData.isBookMarked ? "cancelBookmark" : "addBookmark"
+    );
+    if (!success && success.reason === "no authToken") {
+      router.push("/login");
+    }
   };
   return (
     <S.Container className="quoteCard">
