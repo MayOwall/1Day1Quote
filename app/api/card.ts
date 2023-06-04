@@ -20,7 +20,7 @@ export const postFireNum = async (
   fire: "fireUp" | "fireDown"
 ) => {
   const authToken = sessionStorage.getItem("authToken");
-  if (!authToken) return { success: false, reason: "no authToken" };
+  if (!authToken) return { success: false, reason: "unvalid token" };
   const body = {
     cardId,
     fire,
@@ -38,7 +38,7 @@ export const postBookmark = async (
   bookmark: "addBookmark" | "cancelBookmark"
 ) => {
   const authToken = sessionStorage.getItem("authToken");
-  if (!authToken) return { success: false, reason: "no authToken" };
+  if (!authToken) return { success: false, reason: "unvalid token" };
   const body = {
     cardId,
     bookmark,

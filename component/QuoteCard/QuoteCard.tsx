@@ -44,7 +44,7 @@ function Header({ userData, handleDelete }: IQuoteCardHeaderProps) {
           <Link href={`/profile/${userId}`}>{name}</Link>
         </span>
       </div>
-      {authId && userId === authId && (
+      {userId === authId && (
         <S.CardEditBtns>
           <TrashIcon onClick={handleDelete} />
         </S.CardEditBtns>
@@ -99,6 +99,7 @@ function Body({
 function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
   const { userData, contentData } = cardData;
   const { id: cardId, isFired, isBookMarked } = contentData;
+  const { authData } = useContext(Context);
   const router = useRouter();
   // 이 카드를 삭제하는 핸들러
   const handleDelete = () => {
@@ -110,30 +111,36 @@ function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
 
   // 이 카드의 불꽃 값을 수정하는 핸들러
   const handleFire = async () => {
+    if (!authData) {
+      router.push("/login");
+      return;
+    }
     // 1. 프론트 카드의 불꽃값 수정
     handleCardData("fire", cardId);
-    return;
     // 2. 서버 카드의 불꽃값 수정
     const { success } = await postFireNum(
       cardId,
       isFired ? "fireDown" : "fireUp"
     );
-    if (!success && success.reason === "no authToken") {
+    if (!success && success.reason === "unvalid token") {
       router.push("/login");
     }
   };
 
   // 이 카드의 북마크 값을 수정하는 핸들러
   const handleBookmark = async () => {
+    if (!authData) {
+      router.push("/login");
+      return;
+    }
     // 1. 프론트 카드의 북마크값 수정
     handleCardData("bookmark", cardId);
-    return;
     // 2. 서버 카드의 북마크값 수정
     const { success } = await postBookmark(
       cardId,
       isBookMarked ? "cancelBookmark" : "addBookmark"
     );
-    if (!success && success.reason === "no authToken") {
+    if (!success && success.reason === "unvalid token") {
       router.push("/login");
     }
   };
