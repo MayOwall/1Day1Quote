@@ -50,3 +50,17 @@ export const postBookmark = async (
   });
   return data;
 };
+
+export const deleteQuoteCard = async (cardId: string) => {
+  const authToken = sessionStorage.getItem("authToken");
+  if (!authToken) return { success: false, reason: "unvalid token" };
+  const { data } = await apiClient.delete("/quoteCard/delete", {
+    headers: {
+      Authorization: authToken,
+    },
+    data: {
+      cardId,
+    },
+  });
+  return data;
+};

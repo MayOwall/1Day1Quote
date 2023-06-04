@@ -20,7 +20,7 @@ import {
 } from "@/type";
 import { DateFormatter } from "@/hook";
 import * as S from "./QuoteCard.styles";
-import { postBookmark, postFireNum } from "@/api";
+import { postBookmark, postFireNum, deleteQuoteCard } from "@/api";
 
 // 카드 작성 유저. 클릭시 해당 유저 프로필로 이동
 function Header({ userData, handleDelete }: IQuoteCardHeaderProps) {
@@ -102,11 +102,15 @@ function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
   const { authData } = useContext(Context);
   const router = useRouter();
   // 이 카드를 삭제하는 핸들러
-  const handleDelete = () => {
+  const handleDelete = async () => {
     // 1. 프론트 카드 리스트 수정
     handleCardData("delete", cardId);
 
     // 2. 서버 카드 삭제
+    const { success, reason } = await deleteQuoteCard(cardId);
+    if (!success && reason === "unvalid token") {
+      router.push("/login");
+    }
   };
 
   // 이 카드의 불꽃 값을 수정하는 핸들러
@@ -118,11 +122,11 @@ function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
     // 1. 프론트 카드의 불꽃값 수정
     handleCardData("fire", cardId);
     // 2. 서버 카드의 불꽃값 수정
-    const { success } = await postFireNum(
+    const { success, reason } = await postFireNum(
       cardId,
       isFired ? "fireDown" : "fireUp"
     );
-    if (!success && success.reason === "unvalid token") {
+    if (!success && reason === "unvalid token") {
       router.push("/login");
     }
   };
@@ -136,11 +140,11 @@ function QuoteCard({ cardData, handleCardData }: IQuoteCardProps) {
     // 1. 프론트 카드의 북마크값 수정
     handleCardData("bookmark", cardId);
     // 2. 서버 카드의 북마크값 수정
-    const { success } = await postBookmark(
+    const { success, reason } = await postBookmark(
       cardId,
       isBookMarked ? "cancelBookmark" : "addBookmark"
     );
-    if (!success && success.reason === "unvalid token") {
+    if (!success && reason === "unvalid token") {
       router.push("/login");
     }
   };
