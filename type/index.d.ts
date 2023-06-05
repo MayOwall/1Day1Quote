@@ -128,6 +128,12 @@ interface IProfileTemplateProps extends IProfileBtnListProps {
   handleCardData: ThandleCardData;
 }
 
+interface IHomePageCardListData {
+  data: {
+    isLast: boolean;
+    cardListData: IQuoteCardData[];
+  };
+}
 export {
   IRoundButtonProps,
   IQuoteCardData,
@@ -144,4 +150,5 @@ export {
   IProfileCardProps,
   IProfileBtnListProps,
   IProfileTemplateProps,
+  IHomePageCardListData,
 };

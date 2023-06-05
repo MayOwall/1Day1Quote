@@ -1,4 +1,5 @@
 "use client";
+import { useState, useLayoutEffect } from "react";
 import { RoundButton, QuoteCard } from "@/component";
 import { AnnounceIcon } from "@/public";
 import { IHomeBtnListProps, IHomeTemplateProps, ICardListProps } from "@/type";
@@ -55,13 +56,17 @@ function HomeTemplate({
   cardListData,
   handleCardData,
 }: IHomeTemplateProps) {
+  const [last, setLast] = useState(false);
+  useLayoutEffect(() => {
+    setLast(isLast);
+  }, [isLast]);
   return (
     <S.Container>
       <Announce />
       <BtnList btnListData={btnListData} />
       <CardList cardListData={cardListData} handleCardData={handleCardData} />
       {isLoading && <small>loading...</small>}
-      {isLast && <small>마지막 카드입니다.</small>}
+      {last && <small>마지막 카드입니다.</small>}
     </S.Container>
   );
 }

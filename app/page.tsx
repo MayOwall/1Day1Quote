@@ -1,120 +1,92 @@
 "use client";
 import { useState, useLayoutEffect, useEffect, useRef } from "react";
 import { HomeTemplate } from "@/component";
-import { TBtn, IQuoteCardData } from "@/type";
+import { TBtn, IQuoteCardData, IHomePageCardListData } from "@/type";
 import { getCardList } from "@/api";
+import { updateCardData } from "@/util";
 
 export default function Home() {
   const btnList: TBtn[] = ["최신순", "역대 최고 인기"];
   const [cardListData, setCardListData] = useState<IQuoteCardData[]>([]);
   const [selectedBtn, setSelectedBtn] = useState<TBtn>("최신순");
-  const [pageNum, setPageNum] = useState(1);
-  const [isLast, setIsLast] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const observer = useRef<any>(null);
-
-  // 선택한 버튼 값 핸들러
-  const handleSelectedBtn = (selectedBtn: TBtn) => setSelectedBtn(selectedBtn);
+  const pageNum = useRef(1);
+  const isLast = useRef(false);
 
   // 특정 id의 카드를 추가, 수정, 삭제하는 핸들러
   const handleCardData = (
     type: "add" | "fire" | "bookmark" | "delete",
     cardId: string
   ) => {
-    // 카드 불 수정
-    if (type === "fire" && cardId) {
-      const nextCardListData = cardListData.map((cardData) => {
-        if (cardData.contentData.id === cardId) {
-          cardData.contentData.isFired
-            ? (cardData.contentData.fireCount -= 1)
-            : (cardData.contentData.fireCount += 1);
-          cardData.contentData.isFired = !cardData.contentData.isFired;
-          return cardData;
-        } else {
-          return cardData;
-        }
-      });
-      setCardListData(nextCardListData);
-      return;
-    }
+    updateCardData(type, cardId, cardListData, setCardListData);
+  };
 
-    // 카드 북마크 수정
-    if (type === "bookmark" && cardId) {
-      const nextCardListData = cardListData.map((cardData) => {
-        if (cardData.contentData.id === cardId) {
-          cardData.contentData.isBookMarked =
-            !cardData.contentData.isBookMarked;
-          return cardData;
-        } else {
-          return cardData;
-        }
-      });
-      setCardListData(() => nextCardListData);
-      return;
-    }
-
-    // 카드 삭제
-    if (type === "delete") {
-      const nextCardListData = cardListData.filter(
-        (v) => v.contentData.id !== cardId
+  // 카드 리스트 데이터 초기화
+  const resetCardlistData = async (selectedBtn: TBtn) => {
+    if (!isLoading) {
+      setLoading(true);
+      const { data }: IHomePageCardListData = await getCardList(
+        selectedBtn,
+        pageNum.current
       );
-      setCardListData(nextCardListData);
-      return;
+
+      // last 처리
+
+      if (data.isLast) isLast.current = true;
+      setCardListData(() => data.cardListData);
+      setLoading(false);
     }
   };
 
-  // 카드 리스트 조회 및 set 핸들러
-  const getHomepageCardlistData = async () => {
-    const {
-      data,
-    }: {
-      data: {
-        isLast: boolean;
-        cardListData: IQuoteCardData[];
-      };
-    } = await getCardList(selectedBtn, pageNum);
+  // 카드 리스트 데이터 추가
+  const addHomepageCardlistData = async () => {
+    setLoading(true);
+    const { data }: IHomePageCardListData = await getCardList(
+      selectedBtn,
+      pageNum.current
+    );
 
-    data.isLast && setIsLast(true);
+    if (data.isLast) isLast.current = true;
 
     const nextCardListData = [...cardListData, ...data.cardListData];
-
     setCardListData(() => nextCardListData);
-    setLoading(() => false);
+    setLoading(false);
   };
+
+  // 버튼 값이 변경되었을 때
+  const handleSelectedBtn = (selectedBtn: TBtn) => {
+    setSelectedBtn(selectedBtn);
+    isLast.current = false;
+    pageNum.current = 1;
+    resetCardlistData(selectedBtn);
+  };
+
+  // observe 할 마지막 카드 설정
+  const setObserver = () => {
+    const quoteCardList = document.querySelectorAll(".quoteCard");
+    const lastQuoteCard = quoteCardList[quoteCardList.length - 1];
+    if (!!lastQuoteCard) observer.current.observe(lastQuoteCard);
+  };
+
+  // 초기 카드리스트 데이터 설정
+  useLayoutEffect(() => {
+    resetCardlistData(selectedBtn);
+  }, []);
 
   // 페이지 넘버 변경 때마다 card list 업데이트
   useLayoutEffect(() => {
-    if (!isLast && !isLoading) {
-      setLoading(true);
-      getHomepageCardlistData();
-    }
-  }, [pageNum]);
-
-  // 카드 타입 변경 때마다 card list 변경
-  useLayoutEffect(() => {
-    setLoading(true);
-    setCardListData(() => []);
-    setPageNum(() => 1);
-    getHomepageCardlistData();
-  }, [selectedBtn]);
-
-  // cardListData 변경 때마다 observer 부여
-  useEffect(() => {
-    const quoteCardList = document.querySelectorAll(".quoteCard");
-    const lastQuoteCard = quoteCardList[quoteCardList.length - 1];
-    if (!!lastQuoteCard) {
-      observer.current.observe(lastQuoteCard);
-    }
-  }, [cardListData]);
+    if (!isLoading && !isLast) addHomepageCardlistData();
+  }, [pageNum.current]);
 
   // 무한스크롤 초기 세팅
   useEffect(() => {
-    const observerOption = { threshold: 0.1, rootMargin: "100px 0px" };
+    const observerOption = { threshold: 0.1 };
     const observerCallback = (entries: any, observer: any) => {
       entries.forEach((entry: any) => {
         if (entry.isIntersecting) {
           observer.unobserve(entry.target);
-          setPageNum((v) => v + 1);
+          if (!isLast) pageNum.current += 1;
         }
       });
     };
@@ -124,13 +96,20 @@ export default function Home() {
     );
   }, []);
 
+  // cardListData가 변경될 때 마다 observer 설정
+  useEffect(() => {
+    setObserver();
+  }, [cardListData]);
+
   return (
-    <HomeTemplate
-      isLoading={isLoading}
-      isLast={isLast}
-      btnListData={{ btnList, selectedBtn, handleSelectedBtn }}
-      cardListData={cardListData}
-      handleCardData={handleCardData}
-    />
+    <>
+      <HomeTemplate
+        isLoading={isLoading}
+        isLast={isLast.current}
+        btnListData={{ btnList, selectedBtn, handleSelectedBtn }}
+        cardListData={cardListData}
+        handleCardData={handleCardData}
+      />
+    </>
   );
 }
