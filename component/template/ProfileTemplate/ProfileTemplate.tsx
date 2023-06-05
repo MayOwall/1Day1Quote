@@ -49,12 +49,9 @@ function ProfileTemplate({
   cardListData,
   handleCardData,
 }: IProfileTemplateProps) {
-  const { userData, userActData } = profileData;
   return (
     <S.Container>
-      {profileData && (
-        <ProfileCard userData={userData} userActData={userActData} />
-      )}
+      {profileData && <ProfileCard profileData={profileData} />}
       <BtnList
         selectedType={selectedType}
         handleSelectedType={handleSelectedType}

@@ -16,7 +16,7 @@ export default function Home() {
 
   // 특정 id의 카드를 추가, 수정, 삭제하는 핸들러
   const handleCardData = (
-    type: "add" | "fire" | "bookmark" | "delete",
+    type: "fire" | "bookmark" | "delete",
     cardId: string
   ) => {
     updateCardData(type, cardId, cardListData, setCardListData);

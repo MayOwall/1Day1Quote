@@ -46,13 +46,8 @@ interface IQuoteCardBodyProps {
 
 // handleCardData
 type ThandleCardData = (
-  type: "add" | "fire" | "bookmark" | "delete",
-  cardId: string,
-  newCardData?: {
-    quote: string;
-    speaker: string;
-    imageURL: string;
-  }
+  type: "fire" | "bookmark" | "delete",
+  cardId: string
 ) => void;
 
 // QuoteCard의 프롭 타입
@@ -104,17 +99,20 @@ interface IWriteTemplateProps {
   handleCardData: ThandleCardData;
 }
 
-interface IProfileCardProps {
+interface IProfileCardData {
   userData: {
-    userId: string;
-    userName: string;
-    userIntroduce: string;
-    userImageURL: string;
+    id: string;
+    name: string;
+    introduce: string;
+    imageURL: string;
   };
   userActData: {
-    userQuoteNum: number;
-    userBookmarkNum: number;
+    quoteCount: number;
+    bookmarkCount: number;
   };
+}
+interface IProfileCardProps {
+  profileData: IProfileCardData;
 }
 
 interface IProfileBtnListProps {
@@ -123,7 +121,7 @@ interface IProfileBtnListProps {
 }
 
 interface IProfileTemplateProps extends IProfileBtnListProps {
-  profileData: IProfileCardProps;
+  profileData: IProfileCardData;
   cardListData: IQuoteCardData[];
   handleCardData: ThandleCardData;
 }
@@ -151,4 +149,5 @@ export {
   IProfileBtnListProps,
   IProfileTemplateProps,
   IHomePageCardListData,
+  IProfileCardData,
 };

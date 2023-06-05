@@ -33,7 +33,7 @@ function BNB() {
       return;
     }
     if (icon === "profile" && !isProfilePage) {
-      router.push(authData ? `/profile/${authData.userId}` : "/login");
+      router.push(authData ? `/profile/${authData.id}` : "/login");
       return;
     }
   };

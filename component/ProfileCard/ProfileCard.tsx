@@ -22,23 +22,24 @@ function LabelNum({ label, num }: ILabelNumProps) {
   );
 }
 
-function ProfileCard({ userData, userActData }: IProfileCardProps) {
+function ProfileCard({ profileData }: IProfileCardProps) {
+  const { userData, userActData } = profileData;
   const pathname = usePathname()?.slice(9);
-  const { userData: authData } = useContext(Context);
-  const isSelfProfile = authData.userId === pathname;
-  const { userName, userIntroduce, userImageURL } = userData;
-  const { userQuoteNum, userBookmarkNum } = userActData;
+  const { authData } = useContext(Context);
+  const isSelfProfile = authData.id === pathname;
+  const { name, imageURL, introduce } = userData;
+  const { quoteCount, bookmarkCount } = userActData;
 
   return (
     <S.Container>
       <S.UserData>
         <div>
-          <S.UserName>{userName}</S.UserName>
-          <S.UserIntroduce>{userIntroduce || "자기소개 없음"}</S.UserIntroduce>
+          <S.UserName>{name}</S.UserName>
+          <S.UserIntroduce>{introduce || "자기소개 없음"}</S.UserIntroduce>
         </div>
         <S.UserImage>
           <Image
-            src={userImageURL || defaultProfileImage}
+            src={imageURL || defaultProfileImage}
             fill
             sizes="30vw"
             alt="user-portrait"
@@ -46,8 +47,8 @@ function ProfileCard({ userData, userActData }: IProfileCardProps) {
         </S.UserImage>
       </S.UserData>
       <S.UserActData>
-        <LabelNum label="작성한 문장 수" num={userQuoteNum} />
-        <LabelNum label="저장한 문장 수" num={userBookmarkNum} />
+        <LabelNum label="작성한 문장 수" num={quoteCount} />
+        <LabelNum label="저장한 문장 수" num={bookmarkCount} />
       </S.UserActData>
       {isSelfProfile && (
         <Link href="/profile/edit">
