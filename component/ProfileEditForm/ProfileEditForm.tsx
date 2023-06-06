@@ -18,7 +18,9 @@ function ProfileEditForm() {
   const { authData, setAuthData } = useContext(Context);
 
   const [formData, setFormData] = useState(authData);
-  const [imagePreview, setImagePreview] = useState(authData.imageURL);
+  const [imagePreview, setImagePreview] = useState(
+    authData ? authData.imageURL : ""
+  );
   const [isSubmitAble, setSubmitAble] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [isLoading, setLoading] = useState(false);
