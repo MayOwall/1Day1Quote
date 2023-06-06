@@ -2,7 +2,7 @@
 
 # 1Day1Quote
 
-<img width="2380" alt="프로젝트 소개-데스크톱" src="https://github.com/MayOwall/1Day1Quote/assets/97934878/e8d276f8-1250-48e9-9049-e7c500082f11">
+<img width="2380" alt="프로젝트 소개-데스크톱" src="https://github.com/MayOwall/1Day1Quote/assets/97934878/a496e8da-3511-4a15-92a9-36bc243e97d2">
 
 <br/>
 <br/>
