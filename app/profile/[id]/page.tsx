@@ -1,107 +1,95 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { useLayoutEffect, useState, useContext, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useLayoutEffect, useState } from "react";
 import { getProfile, getUserBookmarkList, getUserQuoteList } from "@/api";
 import { ProfileTemplate } from "@/component";
 import { IQuoteCardData, IProfileCardData } from "@/type";
 import { updateCardData } from "@/util";
-import { Context } from "@/context";
 
 export default function ProfilePage() {
-  const router = useRouter();
-  const pathId = usePathname()?.replace("/profile/", "") || "";
-  const [profileData, setProfileData] = useState<IProfileCardData | null>(null);
-  const [cardListData, setCardListData] = useState<IQuoteCardData[]>([]);
-  const [bookmarkListData, setBookmarkListData] = useState<IQuoteCardData[]>(
+  const userId = usePathname()?.replace("/profile/", "") || "";
+  const [profile, setProfile] = useState<IProfileCardData | null>(null);
+  const [writeCardList, setWriteCardList] = useState<IQuoteCardData[]>([]);
+  const [bookmarkCardList, setBookmarkCardList] = useState<IQuoteCardData[]>(
     []
   );
-  const [selectedType, setSelectedType] = useState<"write" | "bookmark">(
-    "write"
-  );
-  const { authData } = useContext(Context);
-  if (!authData) router.push("/login");
-  const userQuoteListPage = useRef(1);
+  const [selectedBtn, setSelectedBtn] = useState<"write" | "bookmark">("write");
 
   // 현재 선택한 카드 타입 값 핸들러
   const handleSelectedType = () => {
-    if (selectedType === "write") {
-      setSelectedType(() => "bookmark");
-    } else {
-      setSelectedType(() => "write");
-    }
+    const nextSelectedBtn = selectedBtn === "write" ? "bookmark" : "write";
+    setSelectedBtn(nextSelectedBtn);
   };
 
-  // 특정 id의 카드를 추가, 수정, 삭제하는 핸들러
+  // 특정 id의 카드의 불, 북마크, 삭제를 담당하는 핸들러
   const handleCardData = (
     type: "fire" | "bookmark" | "delete",
     cardId: string
   ) => {
+    const cardListData =
+      selectedBtn === "write" ? writeCardList : bookmarkCardList;
+    const setCardListData =
+      selectedBtn === "write" ? setWriteCardList : setBookmarkCardList;
     updateCardData(type, cardId, cardListData, setCardListData);
   };
 
-  const getUserDBDataInit = async () => {
-    const data = await getProfile(pathId);
-    if (!data.success) {
-      alert("에러 발생");
-      return;
+  // 프로필카드 데이터를 가져오는 핸들러
+  const handleProfileCard = async () => {
+    try {
+      const data = await getProfile(userId);
+      const { id, name, imageURL, introduce, quoteCount, bookmarkCount } =
+        data.userDBData;
+      const nextProfile = {
+        userData: {
+          id,
+          name,
+          introduce,
+          imageURL,
+        },
+        userActData: {
+          quoteCount,
+          bookmarkCount,
+        },
+      };
+      setProfile(() => nextProfile);
+    } catch (err) {
+      console.log("error from handleProfileCardData", err);
     }
-    const {
-      id,
-      name,
-      imageURL,
-      introduce,
-      quoteCount,
-      quoteList,
-      bookmarkCount,
-    } = data.userDBData;
-
-    const nextProfileData = {
-      userData: {
-        id,
-        name,
-        introduce,
-        imageURL,
-      },
-      userActData: {
-        quoteCount,
-        bookmarkCount,
-      },
-    };
-    setProfileData(() => nextProfileData);
   };
 
-  const handleUserQuoteList = async () => {
-    const { data } = await getUserQuoteList(pathId, userQuoteListPage.current);
+  // 유저가 작성한 카드 리스트 데이터를 가져오는 핸들러
+  const handleWriteCardList = async () => {
+    const { data } = await getUserQuoteList(userId, 1);
     const quoteList = data.quoteList.filter((v: IQuoteCardData) => v);
-    setCardListData(() => quoteList);
+    setWriteCardList(() => quoteList);
   };
 
+  // 유저가 북마크한 카드 리스트 데이터를 가져오는 핸들러
   const handleBookmarkList = async () => {
-    const { data } = await getUserBookmarkList(pathId, 1);
+    const { data } = await getUserBookmarkList(userId, 1);
     const bookmarkList = data.bookmarkList.filter((v: IQuoteCardData) => !!v);
-    setBookmarkListData(() => bookmarkList);
+    setBookmarkCardList(() => bookmarkList);
   };
 
+  // 유저 정보, 유저 작성 카드, 유저 북마크 카드 정보 초기화
   useLayoutEffect(() => {
-    getUserDBDataInit();
-    handleUserQuoteList();
+    handleProfileCard();
+    handleWriteCardList();
     handleBookmarkList();
   }, []);
 
   return (
     <>
-      {!!profileData && (
-        <ProfileTemplate
-          profileData={profileData}
-          selectedType={selectedType}
-          handleSelectedType={handleSelectedType}
-          cardListData={
-            selectedType === "write" ? cardListData : bookmarkListData
-          }
-          handleCardData={handleCardData}
-        />
-      )}
+      <ProfileTemplate
+        profileData={profile}
+        selectedType={selectedBtn}
+        handleSelectedType={handleSelectedType}
+        cardListData={
+          selectedBtn === "write" ? writeCardList : bookmarkCardList
+        }
+        handleCardData={handleCardData}
+      />
     </>
   );
 }

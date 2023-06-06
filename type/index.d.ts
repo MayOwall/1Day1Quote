@@ -121,7 +121,7 @@ interface IProfileBtnListProps {
 }
 
 interface IProfileTemplateProps extends IProfileBtnListProps {
-  profileData: IProfileCardData;
+  profileData: IProfileCardData | null;
   cardListData: IQuoteCardData[];
   handleCardData: ThandleCardData;
 }
