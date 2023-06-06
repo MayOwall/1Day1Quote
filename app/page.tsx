@@ -1,147 +1,115 @@
 "use client";
-import { useState } from "react";
+import { useState, useLayoutEffect, useEffect, useRef } from "react";
 import { HomeTemplate } from "@/component";
-import { TBtn } from "@/type";
-
-const dummyCardListData = [
-  {
-    userData: {
-      userId: "user123",
-      name: "shin_zzang",
-      profileImage:
-        "https://item.kakaocdn.net/do/fd0050f12764b403e7863c2c03cd4d2d7154249a3890514a43687a85e6b6cc82",
-    },
-    contentData: {
-      cardId: "cardId1",
-      date: "2023.03.12",
-      imageURL:
-        "https://sojoong.joins.com/wp-content/uploads/sites/4/2018/12/bodo_still06.jpg",
-      quote: "첫번째 카드",
-      speaker: "짱구",
-      fireCount: 123,
-      isFired: false,
-      isBookMarked: false,
-    },
-  },
-  {
-    userData: {
-      userId: "user456",
-      name: "boe-zzang",
-      profileImage:
-        "https://cdn.themission.co.kr/news/photo/202211/58650_63198_2559.jpg",
-    },
-    contentData: {
-      cardId: "cardId2",
-      imageURL:
-        "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/tr/2023/04/05/2757ae48-7932-4091-9611-44aa691bd979.jpg",
-      quote: "두번째 카드",
-      speaker: "짱구",
-      date: "2023.03.13",
-      fireCount: 42,
-      isFired: true,
-      isBookMarked: false,
-    },
-  },
-  {
-    userData: {
-      userId: "user123",
-      name: "shin_zzang",
-      profileImage:
-        "https://item.kakaocdn.net/do/fd0050f12764b403e7863c2c03cd4d2d7154249a3890514a43687a85e6b6cc82",
-    },
-    contentData: {
-      cardId: "cardId3",
-      date: "2023.03.12",
-      imageURL:
-        "https://sojoong.joins.com/wp-content/uploads/sites/4/2018/12/bodo_still06.jpg",
-      quote: "세번째 카드",
-      speaker: "짱구",
-      fireCount: 123,
-      isFired: false,
-      isBookMarked: false,
-    },
-  },
-  {
-    userData: {
-      userId: "user456",
-      name: "boe-zzang",
-      profileImage:
-        "https://cdn.themission.co.kr/news/photo/202211/58650_63198_2559.jpg",
-    },
-    contentData: {
-      cardId: "cardId4",
-      date: "2023.03.12",
-      imageURL:
-        "https://sojoong.joins.com/wp-content/uploads/sites/4/2018/12/bodo_still06.jpg",
-      quote: "네번째 카드",
-      speaker: "짱구",
-      fireCount: 123,
-      isFired: false,
-      isBookMarked: false,
-    },
-  },
-];
+import { TBtn, IQuoteCardData, IHomePageCardListData } from "@/type";
+import { getCardList } from "@/api";
+import { updateCardData } from "@/util";
 
 export default function Home() {
-  const btnList: TBtn[] = ["최신순", "이번주 인기", "역대 최고 인기"];
-  const [cardListData, setCardListData] = useState(dummyCardListData);
+  const btnList: TBtn[] = ["최신순", "역대 최고 인기"];
+  const [cardListData, setCardListData] = useState<IQuoteCardData[]>([]);
   const [selectedBtn, setSelectedBtn] = useState<TBtn>("최신순");
-
-  // 선택한 버튼 값 핸들러
-  const handleSelectedBtn = (selectedBtn: TBtn) => setSelectedBtn(selectedBtn);
+  const [isLoading, setLoading] = useState(false);
+  const observer = useRef<any>(null);
+  const pageNum = useRef(1);
+  const isLast = useRef(false);
 
   // 특정 id의 카드를 추가, 수정, 삭제하는 핸들러
   const handleCardData = (
-    type: "add" | "fire" | "bookmark" | "delete",
+    type: "fire" | "bookmark" | "delete",
     cardId: string
   ) => {
-    // 카드 불 수정
-    if (type === "fire" && cardId) {
-      const nextCardListData = cardListData.map((cardData) => {
-        if (cardData.contentData.cardId === cardId) {
-          cardData.contentData.isFired
-            ? (cardData.contentData.fireCount -= 1)
-            : (cardData.contentData.fireCount += 1);
-          cardData.contentData.isFired = !cardData.contentData.isFired;
-          return cardData;
-        } else {
-          return cardData;
-        }
-      });
-      setCardListData(nextCardListData);
-      return;
-    }
+    updateCardData(type, cardId, cardListData, setCardListData);
+  };
 
-    // 카드 북마크 수정
-    if (type === "bookmark" && cardId) {
-      const nextCardListData = cardListData.map((cardData) => {
-        if (cardData.contentData.cardId === cardId) {
-          cardData.contentData.isBookMarked =
-            !cardData.contentData.isBookMarked;
-          return cardData;
-        } else {
-          return cardData;
-        }
-      });
-      setCardListData(() => nextCardListData);
-      return;
-    }
-
-    // 카드 삭제
-    if (type === "delete") {
-      const nextCardListData = cardListData.filter(
-        (v) => v.contentData.cardId !== cardId
+  // 카드 리스트 데이터 초기화
+  const resetCardlistData = async (selectedBtn: TBtn) => {
+    if (!isLoading) {
+      setLoading(true);
+      const { data }: IHomePageCardListData = await getCardList(
+        selectedBtn,
+        pageNum.current
       );
-      setCardListData(nextCardListData);
-      return;
+
+      // last 처리
+
+      if (data.isLast) isLast.current = true;
+      setCardListData(() => data.cardListData);
+      setLoading(false);
     }
   };
 
+  // 카드 리스트 데이터 추가
+  const addHomepageCardlistData = async () => {
+    setLoading(true);
+    const { data }: IHomePageCardListData = await getCardList(
+      selectedBtn,
+      pageNum.current
+    );
+
+    if (data.isLast) isLast.current = true;
+
+    const nextCardListData = [...cardListData, ...data.cardListData];
+    setCardListData(() => nextCardListData);
+    setLoading(false);
+  };
+
+  // 버튼 값이 변경되었을 때
+  const handleSelectedBtn = (selectedBtn: TBtn) => {
+    setSelectedBtn(selectedBtn);
+    isLast.current = false;
+    pageNum.current = 1;
+    resetCardlistData(selectedBtn);
+  };
+
+  // observe 할 마지막 카드 설정
+  const setObserver = () => {
+    const quoteCardList = document.querySelectorAll(".quoteCard");
+    const lastQuoteCard = quoteCardList[quoteCardList.length - 1];
+    if (!!lastQuoteCard) observer.current.observe(lastQuoteCard);
+  };
+
+  // 초기 카드리스트 데이터 설정
+  useLayoutEffect(() => {
+    resetCardlistData(selectedBtn);
+  }, []);
+
+  // 페이지 넘버 변경 때마다 card list 업데이트
+  useLayoutEffect(() => {
+    if (!isLoading && !isLast) addHomepageCardlistData();
+  }, [pageNum.current]);
+
+  // 무한스크롤 초기 세팅
+  useEffect(() => {
+    const observerOption = { threshold: 0.1 };
+    const observerCallback = (entries: any, observer: any) => {
+      entries.forEach((entry: any) => {
+        if (entry.isIntersecting) {
+          observer.unobserve(entry.target);
+          if (!isLast) pageNum.current += 1;
+        }
+      });
+    };
+    observer.current = new IntersectionObserver(
+      observerCallback,
+      observerOption
+    );
+  }, []);
+
+  // cardListData가 변경될 때 마다 observer 설정
+  useEffect(() => {
+    setObserver();
+  }, [cardListData]);
+
   return (
-    <HomeTemplate
-      btnListData={{ btnList, selectedBtn, handleSelectedBtn }}
-      cardListData={cardListData}
-      handleCardData={handleCardData}
-    />
+    <>
+      <HomeTemplate
+        isLoading={isLoading}
+        isLast={isLast.current}
+        btnListData={{ btnList, selectedBtn, handleSelectedBtn }}
+        cardListData={cardListData}
+        handleCardData={handleCardData}
+      />
+    </>
   );
 }

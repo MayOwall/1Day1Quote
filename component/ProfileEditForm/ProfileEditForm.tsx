@@ -1,26 +1,35 @@
 "use client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useState, useRef, useEffect, useContext } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  useLayoutEffect,
+} from "react";
 import { saveImageFormData } from "@/hook";
 import { Context } from "@/context";
+import { editProfile } from "@/api";
 import * as S from "./ProfileEditForm.styles";
 
 function ProfileEditForm() {
-  const { authData, setAuthData } = useContext(Context);
   const router = useRouter();
+  const { authData, setAuthData } = useContext(Context);
+
   const [formData, setFormData] = useState(authData);
   const [imagePreview, setImagePreview] = useState(
-    authData ? authData.userImageURL : ""
+    authData ? authData.imageURL : ""
   );
   const [isSubmitAble, setSubmitAble] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const [isLoading, setLoading] = useState(false);
 
   const handleNickname = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const nextFormData = {
       ...formData,
-      nickname: value,
+      name: value,
     };
     setFormData(nextFormData);
   };
@@ -39,16 +48,29 @@ function ProfileEditForm() {
     const nextImageURL = await saveImageFormData(e);
     const nextFormData = {
       ...formData,
-      userImageURL: nextImageURL,
+      imageURL: nextImageURL,
     };
     setFormData(nextFormData);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setAuthData(() => formData);
-    // 서버에 유저 데이터 저장 작업 필요
-    router.push(`/profile/${authData.userId}`);
+  const handleSubmit = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault();
+      if (!isLoading) {
+        setLoading(true);
+        const { success } = await editProfile(formData);
+        if (!success) {
+          alert("잠시 후 다시 프로필 변경을 시도해 주세요");
+          setLoading(false);
+          return;
+        }
+        setAuthData(formData);
+        // 서버에 유저 데이터 저장 작업 필요
+        router.push(`/profile/${authData.id}`);
+      }
+    } catch (e) {
+      setLoading(false);
+    }
   };
 
   // 이미지 추가 & 이미지 변경 버튼 핸들러
@@ -65,7 +87,7 @@ function ProfileEditForm() {
     setImagePreview(() => "");
     const nextFormData = {
       ...formData,
-      userImageURL: "",
+      imageURL: "",
     };
     setFormData(() => nextFormData);
   };
@@ -84,21 +106,25 @@ function ProfileEditForm() {
     };
   };
 
+  useLayoutEffect(() => {
+    if (!authData) router.push("/login");
+  }, []);
+
   useEffect(() => {
-    if (!!formData.nickname && !!formData.userImageURL) {
+    if (!!formData.name && !!formData.imageURL) {
       setSubmitAble(true);
     }
   }, [formData]);
 
   return (
     <>
-      {!!authData && (
+      {authData && (
         <S.Container onSubmit={handleSubmit}>
           <div>
             <S.Label htmlFor="nickname">닉네임</S.Label>
             <S.Input
               name="nickname"
-              value={formData.nickname}
+              value={formData.name}
               onChange={handleNickname}
             />
             <S.Label htmlFor="introduce">한줄 자기소개</S.Label>
@@ -137,7 +163,6 @@ function ProfileEditForm() {
           <S.SubmitBtn isSubmitAble={isSubmitAble}>프로필 변경하기</S.SubmitBtn>
         </S.Container>
       )}
-      {!authData && <></>}
     </>
   );
 }

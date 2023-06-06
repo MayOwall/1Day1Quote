@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const BASE_URL = "https://1day1quote-be.fly.dev";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 // instance axios
 const apiClient = axios.create({

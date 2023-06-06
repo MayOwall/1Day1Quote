@@ -16,9 +16,9 @@ const authOptions = {
   callbacks: {
     async session({ session, token }: any) {
       const userData = {
-        userId: token.sub,
-        userName: session.user.name,
-        userImageURL: session.user.image || "",
+        id: token.sub,
+        name: session.user.name,
+        imageURL: session.user.image || "",
       };
       const { userData: userDBData } = await postLogin(userData);
       session.user = userDBData;

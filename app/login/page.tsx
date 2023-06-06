@@ -12,13 +12,13 @@ export default function LoginPage() {
 
   useLayoutEffect(() => {
     if (session.status === "authenticated") {
-      const { authToken, userId, userName, userImageURL, userIntroduce }: any =
+      const { authToken, id, name, imageURL, introduce }: any =
         session.data.user;
       const nextAuthData = {
-        userId,
-        userName,
-        userImageURL,
-        userIntroduce,
+        id,
+        name,
+        imageURL,
+        introduce,
       };
       setAuthData(() => nextAuthData);
       sessionStorage.setItem("authToken", authToken);

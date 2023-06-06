@@ -1,11 +1,8 @@
 "use client";
+import { useState, useLayoutEffect } from "react";
 import { RoundButton, QuoteCard } from "@/component";
 import { AnnounceIcon } from "@/public";
-import {
-  ICommunityBtnListProps,
-  ICommunityTemplateProps,
-  ICardListProps,
-} from "@/type";
+import { IHomeBtnListProps, IHomeTemplateProps, ICardListProps } from "@/type";
 import * as S from "./HomeTemplate.styles";
 
 // 공지사항
@@ -19,7 +16,7 @@ function Announce() {
 }
 
 // 카드 정렬 버튼
-function BtnList({ btnListData }: ICommunityBtnListProps) {
+function BtnList({ btnListData }: IHomeBtnListProps) {
   const { btnList, selectedBtn, handleSelectedBtn } = btnListData;
 
   return (
@@ -53,15 +50,23 @@ function CardList({ cardListData, handleCardData }: ICardListProps) {
 }
 
 function HomeTemplate({
+  isLast,
+  isLoading,
   btnListData,
   cardListData,
   handleCardData,
-}: ICommunityTemplateProps) {
+}: IHomeTemplateProps) {
+  const [last, setLast] = useState(false);
+  useLayoutEffect(() => {
+    setLast(isLast);
+  }, [isLast]);
   return (
     <S.Container>
       <Announce />
       <BtnList btnListData={btnListData} />
       <CardList cardListData={cardListData} handleCardData={handleCardData} />
+      {isLoading && <small>loading...</small>}
+      {last && <small>마지막 카드입니다.</small>}
     </S.Container>
   );
 }

@@ -1,203 +1,95 @@
 "use client";
 
-import { getProfile } from "@/app/api/auth";
-import { ProfileTemplate } from "@/component";
-import { DateFormatter } from "@/hook";
 import { usePathname } from "next/navigation";
-import { useLayoutEffect, useEffect, useState } from "react";
-
-const dummyCardListData = [
-  {
-    userData: {
-      userId: "user123",
-      name: "shin_zzang",
-      profileImage:
-        "https://item.kakaocdn.net/do/fd0050f12764b403e7863c2c03cd4d2d7154249a3890514a43687a85e6b6cc82",
-    },
-    contentData: {
-      cardId: "cardId1",
-      date: "2023.03.12",
-      imageURL:
-        "https://sojoong.joins.com/wp-content/uploads/sites/4/2018/12/bodo_still06.jpg",
-      quote: "나를 사랑할 줄 아는 나, 정말 멋져",
-      speaker: "짱구",
-      fireCount: 123,
-      isFired: false,
-      isBookMarked: false,
-    },
-  },
-  {
-    userData: {
-      userId: "user123",
-      name: "shin_zzang",
-      profileImage:
-        "https://item.kakaocdn.net/do/fd0050f12764b403e7863c2c03cd4d2d7154249a3890514a43687a85e6b6cc82",
-    },
-    contentData: {
-      cardId: "cardId2",
-      imageURL:
-        "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/tr/2023/04/05/2757ae48-7932-4091-9611-44aa691bd979.jpg",
-      quote: "나를 아낄줄 아는 나, 정말 멋져",
-      speaker: "짱구",
-      date: "2023.03.13",
-      fireCount: 42,
-      isFired: true,
-      isBookMarked: false,
-    },
-  },
-];
-
-interface IProfileData {
-  userData: {
-    userName: string;
-    userId: string;
-    userIntroduce: string;
-    userImageURL: string;
-  };
-  userActData: {
-    userQuoteNum: number;
-    userBookmarkNum: number;
-  };
-}
+import { useLayoutEffect, useState } from "react";
+import { getProfile, getUserBookmarkList, getUserQuoteList } from "@/api";
+import { ProfileTemplate } from "@/component";
+import { IQuoteCardData, IProfileCardData } from "@/type";
+import { updateCardData } from "@/util";
 
 export default function ProfilePage() {
-  const pathId = usePathname()?.replace("/profile/", "") || "";
-  const [profileData, setProfileData] = useState<IProfileData | null>(null);
-  const [cardListData, setCardListData] = useState(dummyCardListData);
-  const [selectedType, setSelectedType] = useState<"write" | "bookmark">(
-    "write"
+  const userId = usePathname()?.replace("/profile/", "") || "";
+  const [profile, setProfile] = useState<IProfileCardData | null>(null);
+  const [writeCardList, setWriteCardList] = useState<IQuoteCardData[]>([]);
+  const [bookmarkCardList, setBookmarkCardList] = useState<IQuoteCardData[]>(
+    []
   );
+  const [selectedBtn, setSelectedBtn] = useState<"write" | "bookmark">("write");
 
   // 현재 선택한 카드 타입 값 핸들러
   const handleSelectedType = () => {
-    if (selectedType === "write") {
-      setSelectedType(() => "bookmark");
-    } else {
-      setSelectedType(() => "write");
-    }
+    const nextSelectedBtn = selectedBtn === "write" ? "bookmark" : "write";
+    setSelectedBtn(nextSelectedBtn);
   };
 
-  // 특정 id의 카드를 추가, 수정, 삭제하는 핸들러
+  // 특정 id의 카드의 불, 북마크, 삭제를 담당하는 핸들러
   const handleCardData = (
-    type: "add" | "fire" | "bookmark" | "delete",
-    cardId: string,
-    newCardData?: { quote: string; speaker: string; imageURL: string }
+    type: "fire" | "bookmark" | "delete",
+    cardId: string
   ) => {
-    // 카드 추가
-    if (type === "add" && cardId && !!newCardData) {
-      const { imageURL, quote, speaker } = newCardData;
-      const newContentData = {
-        cardId,
-        imageURL,
-        quote,
-        speaker,
-        date: DateFormatter(new Date()),
-        fireCount: 0,
-        isFired: false,
-        isBookMarked: false,
+    const cardListData =
+      selectedBtn === "write" ? writeCardList : bookmarkCardList;
+    const setCardListData =
+      selectedBtn === "write" ? setWriteCardList : setBookmarkCardList;
+    updateCardData(type, cardId, cardListData, setCardListData);
+  };
+
+  // 프로필카드 데이터를 가져오는 핸들러
+  const handleProfileCard = async () => {
+    try {
+      const data = await getProfile(userId);
+      const { id, name, imageURL, introduce, quoteCount, bookmarkCount } =
+        data.userDBData;
+      const nextProfile = {
+        userData: {
+          id,
+          name,
+          introduce,
+          imageURL,
+        },
+        userActData: {
+          quoteCount,
+          bookmarkCount,
+        },
       };
-      const nextCardData = {
-        ...cardListData[cardListData.length - 1],
-        contentData: newContentData,
-      };
-      const nextCardListData = [...cardListData, nextCardData];
-      setCardListData(nextCardListData);
-      return;
-    }
-
-    // 카드 불 수정
-    if (type === "fire" && cardId) {
-      const nextCardListData = cardListData.map((cardData) => {
-        if (cardData.contentData.cardId === cardId) {
-          cardData.contentData.isFired
-            ? (cardData.contentData.fireCount -= 1)
-            : (cardData.contentData.fireCount += 1);
-          cardData.contentData.isFired = !cardData.contentData.isFired;
-          return cardData;
-        } else {
-          return cardData;
-        }
-      });
-      setCardListData(nextCardListData);
-      return;
-    }
-
-    // 카드 북마크 수정
-    if (type === "bookmark" && cardId) {
-      const nextCardListData = cardListData.map((cardData) => {
-        if (cardData.contentData.cardId === cardId) {
-          cardData.contentData.isBookMarked =
-            !cardData.contentData.isBookMarked;
-          return cardData;
-        } else {
-          return cardData;
-        }
-      });
-      setCardListData(() => nextCardListData);
-      return;
-    }
-
-    // 카드 삭제
-    if (type === "delete") {
-      const nextCardListData = cardListData.filter(
-        (v) => v.contentData.cardId !== cardId
-      );
-      setCardListData(nextCardListData);
-      return;
+      setProfile(() => nextProfile);
+    } catch (err) {
+      console.log("error from handleProfileCardData", err);
     }
   };
 
-  const getUserDBDataInit = async () => {
-    const data = await getProfile(pathId);
-    if (!data.success) {
-      alert("에러 발생");
-      return;
-    }
-    const {
-      userId,
-      userImageURL,
-      userIntroduce,
-      userName,
-      userQuoteCount,
-      userQuoteList,
-      userBookmarkCount,
-      userBookmarkList,
-    } = data.userDBData;
-
-    const nextProfileData = {
-      userData: {
-        userId,
-        userName,
-        userIntroduce,
-        userImageURL,
-      },
-      userActData: {
-        userQuoteNum: userQuoteCount,
-        userBookmarkNum: userBookmarkCount,
-      },
-    };
-    setProfileData(() => nextProfileData);
+  // 유저가 작성한 카드 리스트 데이터를 가져오는 핸들러
+  const handleWriteCardList = async () => {
+    const { data } = await getUserQuoteList(userId, 1);
+    const quoteList = data.quoteList.filter((v: IQuoteCardData) => v);
+    setWriteCardList(() => quoteList);
   };
 
+  // 유저가 북마크한 카드 리스트 데이터를 가져오는 핸들러
+  const handleBookmarkList = async () => {
+    const { data } = await getUserBookmarkList(userId, 1);
+    const bookmarkList = data.bookmarkList.filter((v: IQuoteCardData) => !!v);
+    setBookmarkCardList(() => bookmarkList);
+  };
+
+  // 유저 정보, 유저 작성 카드, 유저 북마크 카드 정보 초기화
   useLayoutEffect(() => {
-    getUserDBDataInit();
+    handleProfileCard();
+    handleWriteCardList();
+    handleBookmarkList();
   }, []);
-
-  useEffect(() => {
-    console.log("profileData", profileData);
-  }, [profileData]);
 
   return (
     <>
-      {!!profileData && (
-        <ProfileTemplate
-          profileData={profileData}
-          selectedType={selectedType}
-          handleSelectedType={handleSelectedType}
-          cardListData={cardListData}
-          handleCardData={handleCardData}
-        />
-      )}
+      <ProfileTemplate
+        profileData={profile}
+        selectedType={selectedBtn}
+        handleSelectedType={handleSelectedType}
+        cardListData={
+          selectedBtn === "write" ? writeCardList : bookmarkCardList
+        }
+        handleCardData={handleCardData}
+      />
     </>
   );
 }

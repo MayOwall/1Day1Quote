@@ -1,45 +1,23 @@
-interface IGNBProps {
-  isAuth: boolean;
-}
-
+// Round Button
 interface IRoundButtonProps {
   isSelected: boolean;
   children: string;
   handleSelect: (v: boolean) => void;
 }
 
-type TBtn = "최신순" | "이번주 인기" | "역대 최고 인기";
-
-interface ICommunityBtnListProps {
-  btnListData: {
-    btnList: TBtn[];
-    selectedBtn: TBtn;
-    handleSelectedBtn: (selectedBtn: TBtn) => void;
-  };
-}
-
-interface ICardListProps {
-  cardListData: IQuoteCardData[];
-  handleCardData: ThandleCardData;
-}
-
-interface ICommunityTemplateProps
-  extends ICommunityBtnListProps,
-    ICardListProps {}
-
 /*--QuoteCard--*/
 // QuoteCard의 유저 데이터 타입
 interface IQuoteCardUserData {
-  userId: string;
+  id: string;
   name: string;
-  profileImage: string;
+  imageURL: string;
 }
 
 // QuoteCard의 콘텐츠 데이터 타입
 interface IQuoteCardContentData {
-  cardId: string;
+  id: string;
   date: string;
-  imageURL?: string;
+  imageURL: string;
   quote: string;
   speaker: string;
   fireCount: number;
@@ -53,21 +31,10 @@ interface IQuoteCardData {
   contentData: IQuoteCardContentData;
 }
 
-// handleCardData
-type ThandleCardData = (
-  type: "add" | "fire" | "bookmark" | "delete",
-  cardId: string,
-  newCardData?: {
-    quote: string;
-    speaker: string;
-    imageURL: string;
-  }
-) => void;
-
 // QuoteCard의 헤더 타입
 interface ICQuoteCardHeaderProps {
   userData: IQuoteCardUserData;
-  handleDelete: (_id: string) => void;
+  handleDelete: () => void;
 }
 
 // QuoteCard의 바디 타입
@@ -77,31 +44,74 @@ interface IQuoteCardBodyProps {
   handleBookmark: () => void;
 }
 
+// handleCardData
+type ThandleCardData = (
+  type: "fire" | "bookmark" | "delete",
+  cardId: string
+) => void;
+
 // QuoteCard의 프롭 타입
 interface IQuoteCardProps {
   cardData: IQuoteCardData;
   handleCardData: ThandleCardData;
 }
 
-interface IQuoteFormProps {
+interface ICreateQuoteCardData {
+  userData: {
+    id: string;
+    name: string;
+    imageURL: string;
+  };
+  contentData: {
+    id: string;
+    date: number;
+    imageURL: string;
+    quote: string;
+    speaker: string;
+  };
+}
+
+interface ICardListProps {
+  cardListData: IQuoteCardData[];
   handleCardData: ThandleCardData;
 }
+
+type TBtn = "최신순" | "역대 최고 인기";
+
+interface IHomeBtnListProps {
+  btnListData: {
+    btnList: TBtn[];
+    selectedBtn: TBtn;
+    handleSelectedBtn: (selectedBtn: TBtn) => void;
+  };
+}
+
+interface IHomeTemplateProps extends IHomeBtnListProps {
+  isLoading: boolean;
+  isLast: boolean;
+  cardListData: IQuoteCardData[];
+  handleCardData: THandleCardData;
+}
+
 interface IWriteTemplateProps {
   cardListData: IQuoteCardData[];
   handleCardData: ThandleCardData;
 }
 
-interface IProfileCardProps {
+interface IProfileCardData {
   userData: {
-    userId: string;
-    userName: string;
-    userIntroduce: string;
-    userImageURL: string;
+    id: string;
+    name: string;
+    introduce: string;
+    imageURL: string;
   };
   userActData: {
-    userQuoteNum: number;
-    userBookmarkNum: number;
+    quoteCount: number;
+    bookmarkCount: number;
   };
+}
+interface IProfileCardProps {
+  profileData: IProfileCardData;
 }
 
 interface IProfileBtnListProps {
@@ -110,35 +120,33 @@ interface IProfileBtnListProps {
 }
 
 interface IProfileTemplateProps extends IProfileBtnListProps {
-  profileData: IProfileCardProps;
+  profileData: IProfileCardData | null;
   cardListData: IQuoteCardData[];
   handleCardData: ThandleCardData;
 }
 
-interface ICreateQuoteCardData {
-  token: string;
-  cardData: {
-    _id: string;
-    date: string;
-    quote: string;
-    speaker: string;
-    imageURL: string;
+interface IHomePageCardListData {
+  data: {
+    isLast: boolean;
+    cardListData: IQuoteCardData[];
   };
 }
 export {
-  IGNBProps,
   IRoundButtonProps,
+  IQuoteCardData,
   IQuoteCardHeaderProps,
   IQuoteCardBodyProps,
   IQuoteCardProps,
-  ICommunityBtnListProps,
+  ICreateQuoteCardData,
   ICardListProps,
-  ICommunityTemplateProps,
+  IHomeBtnListProps,
+  IHomeTemplateProps,
   IQuoteFormProps,
   IWriteTemplateProps,
   TBtn,
   IProfileCardProps,
   IProfileBtnListProps,
   IProfileTemplateProps,
-  ICreateQuoteCardData,
+  IHomePageCardListData,
+  IProfileCardData,
 };
