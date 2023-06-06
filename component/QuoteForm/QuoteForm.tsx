@@ -18,6 +18,7 @@ const formDataInit = {
 function QuoteForm() {
   const router = useRouter();
   const { authData } = useContext(Context);
+  if (!authData) router.push("/login");
   const [formData, setFormData] = useState(formDataInit);
   const [imagePreview, setImagePreview] = useState("");
   const [quoteHeight, setQuoteHeight] = useState(30);
@@ -87,35 +88,25 @@ function QuoteForm() {
 
   // 서버로 카드 데이터 전송
   const postCardData = async () => {
-    try {
-      // 토큰 가져오기
-      const authToken = sessionStorage.getItem("authToken");
-      if (!authToken) return;
+    // 새로운 카드 데이터 생성
+    const newQuoteCardData: ICreateQuoteCardData = {
+      userData: {
+        id: authData.id,
+        name: authData.name,
+        imageURL: authData.imageURL,
+      },
+      contentData: {
+        id: uuid4(),
+        date: new Date().getTime(),
+        imageURL: formData.imageURL,
+        quote: formData.quote,
+        speaker: formData.speaker,
+      },
+    };
 
-      // 새로운 카드 데이터 생성
-      const newQuoteCardData: ICreateQuoteCardData = {
-        token: authToken,
-        userData: {
-          id: authData.userId,
-          name: authData.userName,
-          imageURL: authData.userImageURL,
-        },
-        contentData: {
-          id: uuid4(),
-          date: new Date().getTime(),
-          imageURL: formData.imageURL,
-          quote: formData.quote,
-          speaker: formData.speaker,
-        },
-      };
-
-      // DB로 새 카드 데이터 전송
-      const data = await postQuoteCard(newQuoteCardData);
-      return data;
-    } catch (e) {
-      console.error(e);
-      return { success: false };
-    }
+    // DB로 새 카드 데이터 전송
+    const data = await postQuoteCard(newQuoteCardData);
+    return data;
   };
 
   // 오늘의 문장 제출 핸들러

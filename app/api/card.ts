@@ -11,7 +11,14 @@ export const postImage = async (image: FormData) => {
 };
 
 export const postQuoteCard = async (quoteCardData: ICreateQuoteCardData) => {
-  const { data } = await apiClient.post("/quoteCard/create", quoteCardData);
+  const authToken = sessionStorage.getItem("authToken");
+  if (!authToken) return { success: false, reason: "unvalid token" };
+
+  const { data } = await apiClient.post("/quoteCard/create", quoteCardData, {
+    headers: {
+      Authorization: authToken,
+    },
+  });
   return data;
 };
 

@@ -57,7 +57,6 @@ interface IQuoteCardProps {
 }
 
 interface ICreateQuoteCardData {
-  token: string;
   userData: {
     id: string;
     name: string;
