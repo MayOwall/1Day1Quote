@@ -122,3 +122,21 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+input,
+textarea {
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+}
+input::placeholder,
+textarea::placeholder {
+  opacity: 50%;
+}
+textarea::-webkit-scrollbar {
+  display: none;
+}
