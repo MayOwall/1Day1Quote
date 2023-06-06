@@ -1,8 +1,8 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useLayoutEffect, useEffect, useState, useContext } from "react";
-import { getProfile } from "@/api";
+import { useLayoutEffect, useState, useContext, useRef } from "react";
+import { getProfile, getUserBookmarkList, getUserQuoteList } from "@/api";
 import { ProfileTemplate } from "@/component";
 import { IQuoteCardData, IProfileCardData } from "@/type";
 import { updateCardData } from "@/util";
@@ -13,10 +13,15 @@ export default function ProfilePage() {
   const pathId = usePathname()?.replace("/profile/", "") || "";
   const [profileData, setProfileData] = useState<IProfileCardData | null>(null);
   const [cardListData, setCardListData] = useState<IQuoteCardData[]>([]);
+  const [bookmarkListData, setBookmarkListData] = useState<IQuoteCardData[]>(
+    []
+  );
   const [selectedType, setSelectedType] = useState<"write" | "bookmark">(
     "write"
   );
   const { authData } = useContext(Context);
+  if (!authData) router.push("/login");
+  const userQuoteListPage = useRef(1);
 
   // 현재 선택한 카드 타입 값 핸들러
   const handleSelectedType = () => {
@@ -66,14 +71,23 @@ export default function ProfilePage() {
     setProfileData(() => nextProfileData);
   };
 
-  if (!authData) router.push("/login");
+  const handleUserQuoteList = async () => {
+    const { data } = await getUserQuoteList(pathId, userQuoteListPage.current);
+    const quoteList = data.quoteList.filter((v: IQuoteCardData) => v);
+    setCardListData(() => quoteList);
+  };
+
+  const handleBookmarkList = async () => {
+    const { data } = await getUserBookmarkList(pathId, 1);
+    const bookmarkList = data.bookmarkList.filter((v: IQuoteCardData) => !!v);
+    setBookmarkListData(() => bookmarkList);
+  };
+
   useLayoutEffect(() => {
     getUserDBDataInit();
+    handleUserQuoteList();
+    handleBookmarkList();
   }, []);
-
-  useEffect(() => {
-    console.log("profileData", profileData);
-  }, [profileData]);
 
   return (
     <>
@@ -82,7 +96,9 @@ export default function ProfilePage() {
           profileData={profileData}
           selectedType={selectedType}
           handleSelectedType={handleSelectedType}
-          cardListData={cardListData}
+          cardListData={
+            selectedType === "write" ? cardListData : bookmarkListData
+          }
           handleCardData={handleCardData}
         />
       )}
